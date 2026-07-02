@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>OpinionHub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+html{
+background:#F5F4EE;
+height:100%;
+}
+
+body{
+background:#F5F4EE;
+color:#24332A;
+min-height:100vh;
+min-height:100dvh;
+overscroll-behavior-y:none;
+-webkit-tap-highlight-color:transparent;
+}
+
+#root{
+background:#F5F4EE;
+min-height:100vh;
+min-height:100dvh;
+}
+
+button{cursor:pointer;font-family:'Inter',sans-serif;}
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+outline:2px solid #2F855A;outline-offset:2px;
+}
+
+button, .card, [data-open], .trend, .vote-arrow{
+-webkit-tap-highlight-color:transparent;
+touch-action:manipulation;
+}
+
+header{
+
+min-height:75px;
+background:#FFFFFF;
+
+border-bottom:1px solid #D8DDD7;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:0 55px;
+padding-top:env(safe-area-inset-top);
+
+position:sticky;
+top:0;
+z-index:20;
+
+}
+
+.logo{
+
+font-size:30px;
+font-weight:800;
+color:#2F855A;
+cursor:pointer;
+
+}
+
+nav{
+
+display:flex;
+gap:15px;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+
+}
+
+nav::-webkit-scrollbar{display:none;}
+
+nav button{
+
+background:none;
+border:none;
+
+padding:11px 18px;
+
+border-radius:12px;
+
+font-size:15px;
+
+color:#66736A;
+
+transition:.25s;
+
+white-space:nowrap;
+flex-shrink:0;
+
+}
+
+@media (hover:hover) and (pointer:fine){
+nav button:hover{
+background:#EDF7F0;
+color:#2F855A;
+}
+}
+
+.active{
+
+background:#2F855A;
+
+color:white;
+
+font-weight:700;
+
+}
+
+.wrapper{
+
+background:#F5F4EE;
+max-width:1300px;
+
+margin:auto;
+
+padding:35px;
+
+display:grid;
+
+grid-template-columns:270px 1fr 290px;
+
+gap:25px;
+
+}
+
+.sidebar{
+
+background:white;
+
+border:1px solid #D8DDD7;
+
+border-radius:22px;
+
+padding:22px;
+
+height:fit-content;
+
+}
+
+.sidebar h3{
+
+margin-bottom:18px;
+
+}
+
+.sidebar button{
+
+width:100%;
+
+padding:14px;
+
+margin-bottom:12px;
+
+background:#2F855A;
+
+color:white;
+
+font-weight:700;
+
+border:none;
+
+border-radius:14px;
+
+transition:.25s;
+
+}
+
+@media (hover:hover) and (pointer:fine){
+.sidebar button:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 12px 25px rgba(47,133,90,.18);
+
+}
+}
+
+.sidebar button.ghost{
+background:#EDF7F0;
+color:#2F855A;
+}
+
+.search{
+
+margin-bottom:25px;
+
+}
+
+.search input{
+
+width:100%;
+
+padding:15px;
+
+border-radius:16px;
+
+border:1px solid #D8DDD7;
+
+background:white;
+
+outline:none;
+
+font-size:15px;
+
+color:#24332A;
+
+}
+
+.feed{
+
+display:flex;
+
+flex-direction:column;
+
+gap:22px;
+
+}
+
+.card{
+
+background:white;
+
+border:1px solid #D8DDD7;
+
+border-radius:22px;
+
+padding:25px;
+
+transition:.25s;
+
+cursor:pointer;
+
+}
+
+@media (hover:hover) and (pointer:fine){
+.card:hover{
+
+transform:translateY(-5px);
+
+box-shadow:0 18px 35px rgba(0,0,0,.08);
+
+border-color:#68D391;
+
+}
+}
+
+.tag{
+
+display:inline-block;
+
+padding:6px 13px;
+
+border-radius:999px;
+
+background:#EDF7F0;
+
+color:#2F855A;
+
+font-size:13px;
+
+font-weight:700;
+
+margin-bottom:18px;
+
+}
+
+.tag.debate-tag{
+background:#FDEEE4;
+color:#B8623F;
+}
+
+.title{
+
+font-size:25px;
+
+font-weight:700;
+
+margin-bottom:12px;
+
+}
+
+.desc{
+
+color:#66736A;
+
+line-height:1.7;
+
+margin-bottom:22px;
+
+}
+
+.bottom{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+flex-wrap:wrap;
+gap:12px;
+
+}
+
+.stats{
+
+display:flex;
+
+gap:20px;
+
+font-size:14px;
+
+color:#66736A;
+
+}
+
+.vote{
+
+background:#EDF7F0;
+
+padding:9px 16px;
+
+border-radius:999px;
+
+color:#2F855A;
+
+font-weight:700;
+
+}
+
+.right{
+
+background:white;
+
+border:1px solid #D8DDD7;
+
+border-radius:22px;
+
+padding:22px;
+
+height:fit-content;
+
+}
+
+.right h3{
+
+margin-bottom:18px;
+
+}
+
+.trend{
+
+padding:14px 0;
+
+border-bottom:1px solid #E7ECE7;
+
+cursor:pointer;
+
+transition:.25s;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+font-size:14px;
+
+}
+
+.trend:last-child{border-bottom:none;}
+
+@media (hover:hover) and (pointer:fine){
+.trend:hover{
+
+padding-left:12px;
+
+color:#2F855A;
+
+}
+}
+
+.trend .tvotes{
+font-size:12px;
+color:#9AA39C;
+white-space:nowrap;
+}
+
+.debate{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:18px;
+
+margin-top:20px;
+
+}
+
+.side{
+
+background:#F8FAF7;
+
+padding:18px;
+
+border-radius:16px;
+
+border:1px solid #E3E8E3;
+
+}
+
+.progress{
+
+height:10px;
+
+background:#DCE6DC;
+
+border-radius:999px;
+
+overflow:hidden;
+
+margin-top:15px;
+
+}
+
+.fill{
+
+height:100%;
+
+background:#2F855A;
+
+}
+
+.fill2{
+
+height:100%;
+
+background:#68D391;
+
+}
+
+footer{
+
+text-align:center;
+
+padding:35px;
+
+color:#7A867E;
+font-size:13px;
+
+}
+
+.empty-state{
+background:white;
+border:1px dashed #D8DDD7;
+border-radius:22px;
+padding:50px 25px;
+text-align:center;
+color:#66736A;
+}
+
+.empty-state .big{
+font-size:32px;
+margin-bottom:10px;
+}
+
+/* ---------- detail view ---------- */
+
+.back-btn{
+background:none;
+border:none;
+color:#66736A;
+font-size:14px;
+font-weight:600;
+padding:0 0 18px;
+display:inline-block;
+}
+@media (hover:hover) and (pointer:fine){
+.back-btn:hover{color:#2F855A;}
+}
+
+.detail-card{
+background:white;
+border:1px solid #D8DDD7;
+border-radius:22px;
+padding:32px;
+margin-bottom:24px;
+}
+.detail-card .title{font-size:30px;margin-bottom:14px;}
+.detail-meta{
+display:flex;
+gap:18px;
+color:#66736A;
+font-size:14px;
+margin-top:10px;
+flex-wrap:wrap;
+}
+
+.side-heading{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:4px;
+}
+.side-heading h3{font-size:17px;}
+.side-pct{font-weight:800;color:#2F855A;}
+.side.b .side-pct{color:#4A8F69;}
+
+.opinion-form{
+background:white;
+border:1px solid #D8DDD7;
+border-radius:22px;
+padding:22px;
+margin-bottom:24px;
+}
+.opinion-form h4{margin-bottom:14px;font-size:15px;color:#66736A;}
+.opinion-form textarea{
+width:100%;
+padding:15px;
+border-radius:16px;
+border:1px solid #D8DDD7;
+background:#F8FAF7;
+outline:none;
+font-size:15px;
+color:#24332A;
+resize:vertical;
+min-height:80px;
+}
+.opinion-form-row{
+display:flex;
+gap:10px;
+margin-top:12px;
+flex-wrap:wrap;
+align-items:center;
+}
+.opinion-form-row input[type=text]{
+flex:1;
+min-width:160px;
+padding:12px 14px;
+border-radius:14px;
+border:1px solid #D8DDD7;
+font-size:14px;
+outline:none;
+}
+.opinion-form-row select{
+padding:12px 14px;
+border-radius:14px;
+border:1px solid #D8DDD7;
+font-size:14px;
+background:white;
+outline:none;
+}
+.post-btn{
+background:#2F855A;
+color:white;
+border:none;
+padding:12px 22px;
+border-radius:14px;
+font-weight:700;
+font-size:14px;
+transition:.25s;
+}
+@media (hover:hover) and (pointer:fine){
+.post-btn:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(47,133,90,.18);}
+}
+
+.opinions-col{display:flex;flex-direction:column;gap:14px;}
+.opinions-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+
+.opinion-item{
+background:white;
+border:1px solid #D8DDD7;
+border-radius:18px;
+padding:18px;
+display:flex;
+gap:14px;
+}
+.opinion-item.top{border-color:#68D391;background:#F7FCF9;}
+.opinion-item .vote-col{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:4px;
+flex-shrink:0;
+width:52px;
+}
+.vote-arrow{
+width:38px;
+height:34px;
+border-radius:10px;
+border:1px solid #D8DDD7;
+background:#F8FAF7;
+color:#2F855A;
+font-size:16px;
+}
+@media (hover:hover) and (pointer:fine){
+.vote-arrow:hover{border-color:#2F855A;}
+}
+.vote-arrow.voted{background:#2F855A;color:white;border-color:#2F855A;}
+.vote-count{font-weight:800;font-size:15px;color:#24332A;}
+.opinion-text{font-size:15px;line-height:1.6;margin-bottom:8px;}
+.opinion-author{font-size:12.5px;color:#8A968D;}
+.top-badge{
+display:inline-block;
+font-size:11px;
+font-weight:800;
+color:#2F855A;
+background:#EDF7F0;
+padding:3px 9px;
+border-radius:999px;
+margin-bottom:8px;
+letter-spacing:.3px;
+}
+
+/* ---------- modal ---------- */
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(20,30,24,.45);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:50;
+}
+.modal{
+background:white;
+border-radius:22px;
+width:100%;
+max-width:480px;
+padding:30px;
+max-height:90vh;
+overflow-y:auto;
+}
+.modal h2{font-size:22px;margin-bottom:20px;}
+.modal label{
+display:block;
+font-size:13px;
+font-weight:700;
+color:#66736A;
+margin:16px 0 6px;
+}
+.modal input[type=text], .modal textarea{
+width:100%;
+padding:13px 14px;
+border-radius:14px;
+border:1px solid #D8DDD7;
+font-size:14px;
+outline:none;
+}
+.modal textarea{min-height:80px;resize:vertical;}
+.type-pick{display:flex;gap:10px;margin-top:4px;}
+.type-pick button{
+flex:1;
+background:#F8FAF7;
+border:1px solid #D8DDD7;
+color:#66736A;
+padding:12px;
+border-radius:14px;
+font-weight:700;
+font-size:14px;
+}
+.type-pick button.picked{border-color:#2F855A;color:#2F855A;background:#EDF7F0;}
+.side-labels-row{display:flex;gap:10px;}
+.side-labels-row input{flex:1;}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
+.cancel-btn{
+background:none;
+border:1px solid #D8DDD7;
+color:#66736A;
+padding:12px 18px;
+border-radius:14px;
+font-size:14px;
+font-weight:600;
+}
+@media (hover:hover) and (pointer:fine){
+.cancel-btn:hover{border-color:#B8B8B8;}
+}
+
+/* tap feedback for touch devices, since hover states are disabled above */
+@media (hover:none) and (pointer:coarse){
+.card:active{transform:scale(0.98);border-color:#68D391;}
+.sidebar button:active{transform:scale(0.96);}
+.post-btn:active{transform:scale(0.97);}
+.vote-arrow:active{transform:scale(0.9);}
+.trend:active{color:#2F855A;}
+nav button:active{background:#EDF7F0;color:#2F855A;}
+.cancel-btn:active{border-color:#B8B8B8;}
+}
+
+@media(max-width:700px){
+.overlay{padding:0;align-items:flex-end;}
+.modal{
+max-width:100%;
+width:100%;
+border-radius:22px 22px 0 0;
+max-height:88vh;
+padding:22px 18px calc(22px + env(safe-area-inset-bottom));
+}
+.modal h2{font-size:19px;}
+.type-pick button{padding:13px;font-size:13.5px;}
+.side-labels-row{flex-direction:column;}
+.modal-foot{flex-direction:column-reverse;gap:8px;}
+.modal-foot button{width:100%;padding:14px;}
+}
+
+@media(max-width:1000px){
+
+.wrapper{
+
+grid-template-columns:1fr;
+
+}
+
+.main-col{order:1;}
+.sidebar{order:2;}
+.right{order:3;}
+
+.debate{
+
+grid-template-columns:1fr;
+
+}
+
+.opinions-grid{grid-template-columns:1fr;}
+
+header{
+
+padding:0 20px;
+
+}
+
+}
+
+/* ---------- phones & small tablets ---------- */
+@media(max-width:700px){
+
+header{
+min-height:auto;
+flex-direction:column;
+align-items:stretch;
+gap:0;
+padding:14px 16px calc(10px + env(safe-area-inset-top));
+padding-top:calc(14px + env(safe-area-inset-top));
+}
+
+.logo{font-size:22px;margin-bottom:10px;}
+
+nav{gap:8px;padding-bottom:2px;margin:0 -16px;padding-left:16px;padding-right:16px;}
+
+nav button{padding:9px 14px;font-size:13.5px;}
+
+.wrapper{padding:16px;gap:16px;}
+
+.sidebar{
+display:flex;
+gap:10px;
+padding:14px;
+border-radius:16px;
+}
+.sidebar h3{display:none;}
+.sidebar button{margin-bottom:0;padding:13px 10px;font-size:13px;border-radius:12px;}
+
+.search input{padding:13px 14px;border-radius:14px;}
+
+.feed{gap:16px;}
+
+.card{padding:18px;border-radius:18px;}
+.title{font-size:20px;margin-bottom:10px;}
+.desc{font-size:13.5px;margin-bottom:16px;line-height:1.6;}
+.tag{font-size:11.5px;padding:5px 11px;margin-bottom:14px;}
+.bottom{gap:10px;}
+.stats{font-size:12px;gap:12px;}
+.vote{font-size:12.5px;padding:7px 12px;}
+
+.side{padding:14px;border-radius:14px;}
+.side-heading h3{font-size:15px;}
+
+.right{padding:16px;border-radius:16px;}
+.trend{padding:12px 0;font-size:13.5px;}
+
+.detail-card{padding:20px;border-radius:18px;}
+.detail-card .title{font-size:22px;}
+.detail-meta{gap:10px 16px;font-size:12.5px;}
+
+.opinion-form{padding:16px;border-radius:18px;}
+.opinion-form-row{flex-direction:column;align-items:stretch;}
+.opinion-form-row select,
+.opinion-form-row input[type=text]{width:100%;min-width:0;}
+.post-btn{width:100%;padding:14px;}
+
+.opinion-item{padding:14px;gap:10px;border-radius:14px;}
+.opinion-item .vote-col{width:44px;}
+.vote-arrow{width:44px;height:40px;font-size:15px;}
+.vote-count{font-size:14px;}
+.opinion-text{font-size:14px;}
+.opinion-author{font-size:12px;}
+
+.back-btn{padding:6px 0 14px;font-size:13.5px;}
+
+footer{padding:24px 16px;font-size:12px;}
+
+/* prevent iOS auto-zoom on focus by keeping form fields >=16px */
+input, textarea, select{font-size:16px;}
+
+}
+
+@media(max-width:420px){
+.logo{font-size:20px;}
+.title{font-size:18px;}
+.detail-card .title{font-size:20px;}
+.sidebar{flex-direction:column;}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo" id="logoHome">
+OpinionHub
+</div>
+
+<nav id="navTabs">
+
+<button class="active" data-filter="home">Home</button>
+
+<button data-filter="topic">Topics</button>
+
+<button data-filter="debate">Debates</button>
+
+<button data-filter="trending">Trending</button>
+
+</nav>
+
+</header>
+
+<div id="root"></div>
+
+<footer>
+
+OpinionHub Prototype • Forest & Cream Theme
+
+</footer>
+
+<script>
+const KEYS = { topics:'opinionhub-topics', ops:(id)=>`opinionhub-ops-${id}` };
+
+let state = {
+  topics: [],
+  loading: true,
+  filter: 'home',
+  search: '',
+  route: { view:'home', id:null },
+  votedThisSession: new Set(),
+  detailOpinions: [],
+};
+
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+
+function formatK(n){
+  if(n >= 1000) return (n/1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'K';
+  return String(n);
+}
+
+function timeAgo(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s < 60) return 'just now';
+  const m = Math.floor(s/60); if(m < 60) return m+' min ago';
+  const h = Math.floor(m/60); if(h < 24) return h+' hour'+(h>1?'s':'')+' ago';
+  const d = Math.floor(h/24); if(d < 30) return d+' day'+(d>1?'s':'')+' ago';
+  return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+async function loadTopics(){
+  try{
+    const res = await window.storage.get(KEYS.topics, true);
+    state.topics = res ? JSON.parse(res.value) : [];
+  }catch(e){ state.topics = []; }
+}
+async function saveTopics(){
+  await window.storage.set(KEYS.topics, JSON.stringify(state.topics), true);
+}
+async function loadOpinions(topicId){
+  try{
+    const res = await window.storage.get(KEYS.ops(topicId), true);
+    state.detailOpinions = res ? JSON.parse(res.value) : [];
+  }catch(e){ state.detailOpinions = []; }
+}
+async function saveOpinions(topicId){
+  await window.storage.set(KEYS.ops(topicId), JSON.stringify(state.detailOpinions), true);
+}
+
+function ensureStats(t){
+  t.stats = t.stats || { opinionCount:0, voteCount:0, sideAVotes:0, sideBVotes:0 };
+  return t.stats;
+}
+
+async function render(){
+  const root = document.getElementById('root');
+  if(state.loading){
+    root.innerHTML = `<div class="wrapper"><div class="empty-state" style="grid-column:1/-1;"><div class="big">🌿</div>Loading the floor…</div></div>`;
+    return;
+  }
+  document.querySelectorAll('#navTabs button').forEach(b=>{
+    b.classList.toggle('active', state.route.view==='home' && b.dataset.filter===state.filter);
+  });
+  if(state.route.view === 'home'){
+    root.innerHTML = renderHome();
+  } else {
+    root.innerHTML = await renderDetail(state.route.id);
+  }
+  bindEvents();
+}
+
+function trendingList(){
+  return [...state.topics]
+    .sort((a,b)=> ensureStats(b).voteCount - ensureStats(a).voteCount)
+    .slice(0,6);
+}
+
+function renderSidebarRight(){
+  const trending = trendingList();
+  const items = trending.length
+    ? trending.map(t => `<div class="trend" data-open="${t.id}"><span>${escapeHtml(t.title)}</span><span class="tvotes">▲ ${formatK(ensureStats(t).voteCount)}</span></div>`).join('')
+    : `<div class="trend" style="color:#9AA39C;cursor:default;">Nothing trending yet</div>`;
+  return `
+    <div class="right">
+      <h3>🌿 Trending</h3>
+      ${items}
+    </div>
+  `;
+}
+
+function renderCard(t){
+  const stats = ensureStats(t);
+  if(t.type === 'debate'){
+    const total = stats.sideAVotes + stats.sideBVotes;
+    const pctA = total ? Math.round((stats.sideAVotes/total)*100) : 50;
+    const pctB = 100 - pctA;
+    const labels = t.sideLabels || ['Side A','Side B'];
+    return `
+      <div class="card" data-open="${t.id}">
+        <div class="tag debate-tag">⚔ ${escapeHtml(t.tag || 'Debate')}</div>
+        <div class="title">${escapeHtml(t.title)}</div>
+        ${t.description ? `<div class="desc">${escapeHtml(t.description)}</div>` : ''}
+        <div class="debate">
+          <div class="side a">
+            <div class="side-heading"><h3>${escapeHtml(labels[0])}</h3></div>
+            <div class="progress"><div class="fill" style="width:${pctA}%"></div></div>
+            <p style="margin-top:10px;color:#2F855A;font-weight:700;">${pctA}%</p>
+          </div>
+          <div class="side b">
+            <div class="side-heading"><h3>${escapeHtml(labels[1])}</h3></div>
+            <div class="progress"><div class="fill2" style="width:${pctB}%"></div></div>
+            <p style="margin-top:10px;color:#4A8F69;font-weight:700;">${pctB}%</p>
+          </div>
+        </div>
+        <div class="bottom" style="margin-top:20px;">
+          <div class="stats">
+            <span>💬 ${stats.opinionCount} Arguments</span>
+            <span>🕒 ${timeAgo(t.createdAt)}</span>
+          </div>
+          <div class="vote">▲ ${formatK(stats.voteCount)} Votes</div>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="card" data-open="${t.id}">
+      <div class="tag">${escapeHtml(t.tag || 'General')}</div>
+      <div class="title">${escapeHtml(t.title)}</div>
+      ${t.description ? `<div class="desc">${escapeHtml(t.description)}</div>` : ''}
+      <div class="bottom">
+        <div class="stats">
+          <span>💬 ${stats.opinionCount} Opinions</span>
+          <span>🕒 ${timeAgo(t.createdAt)}</span>
+        </div>
+        <div class="vote">▲ ${formatK(stats.voteCount)} Votes</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderHome(){
+  let list = state.topics.slice();
+
+  if(state.filter === 'trending'){
+    list.sort((a,b)=> ensureStats(b).voteCount - ensureStats(a).voteCount);
+  } else if(state.filter === 'home'){
+    list.sort((a,b)=> b.createdAt - a.createdAt);
+  } else {
+    list = list.filter(t => t.type === state.filter);
+    list.sort((a,b)=> b.createdAt - a.createdAt);
+  }
+
+  const q = state.search.trim().toLowerCase();
+  if(q){
+    list = list.filter(t =>
+      t.title.toLowerCase().includes(q) ||
+      (t.description||'').toLowerCase().includes(q) ||
+      (t.tag||'').toLowerCase().includes(q)
+    );
+  }
+
+  const emptyMsg = q
+    ? `<div class="big">🔍</div>No results for "${escapeHtml(state.search)}"`
+    : `<div class="big">🌿</div>Nothing here yet.<br>Be the first to open one.`;
+
+  return `
+    <div class="wrapper">
+      <div class="sidebar">
+        <h3>Create</h3>
+        <button id="btnNewTopic">＋ New Topic</button>
+        <button id="btnNewDebate" class="ghost">⚔ New Debate</button>
+      </div>
+
+      <div class="main-col">
+        <div class="search">
+          <input id="searchInput" placeholder="Search topics, debates or opinions..." value="${escapeHtml(state.search)}">
+        </div>
+        <div class="feed">
+          ${ list.length ? list.map(renderCard).join('') : `<div class="empty-state">${emptyMsg}</div>` }
+        </div>
+      </div>
+
+      ${renderSidebarRight()}
+    </div>
+  `;
+}
+
+async function renderDetail(id){
+  const t = state.topics.find(x => x.id === id);
+  if(!t){
+    return `<div class="wrapper"><div class="empty-state" style="grid-column:1/-1;">That item isn't here anymore.</div></div>`;
+  }
+  await loadOpinions(id);
+  const stats = ensureStats(t);
+  const isDebate = t.type === 'debate';
+  const labels = t.sideLabels || ['Side A','Side B'];
+
+  const opinionRow = (op, isTop) => {
+    const voted = state.votedThisSession.has(op.id);
+    return `
+      <div class="opinion-item ${isTop ? 'top':''}">
+        <div class="vote-col">
+          <button class="vote-arrow ${voted?'voted':''}" data-vote="${op.id}" aria-label="Upvote">▲</button>
+          <div class="vote-count">${op.votes}</div>
+        </div>
+        <div>
+          ${isTop ? `<div class="top-badge">TOP</div>` : ''}
+          <div class="opinion-text">${escapeHtml(op.text)}</div>
+          <div class="opinion-author">${escapeHtml(op.author || 'Anonymous')} · ${timeAgo(op.createdAt)}</div>
+        </div>
+      </div>
+    `;
+  };
+
+  let body;
+  if(isDebate){
+    const opinions = [...state.detailOpinions];
+    const sideA = opinions.filter(o=>o.side==='a').sort((a,b)=>b.votes-a.votes);
+    const sideB = opinions.filter(o=>o.side==='b').sort((a,b)=>b.votes-a.votes);
+    const total = stats.sideAVotes + stats.sideBVotes;
+    const pctA = total ? Math.round((stats.sideAVotes/total)*100) : 50;
+    const pctB = 100 - pctA;
+    body = `
+      <div class="detail-card">
+        <div class="tag debate-tag">⚔ ${escapeHtml(t.tag||'Debate')}</div>
+        <div class="title">${escapeHtml(t.title)}</div>
+        ${t.description ? `<div class="desc" style="margin-bottom:0;">${escapeHtml(t.description)}</div>` : ''}
+        <div class="debate">
+          <div class="side a">
+            <div class="side-heading"><h3>${escapeHtml(labels[0])}</h3><span class="side-pct">${pctA}%</span></div>
+            <div class="progress"><div class="fill" style="width:${pctA}%"></div></div>
+          </div>
+          <div class="side b">
+            <div class="side-heading"><h3>${escapeHtml(labels[1])}</h3><span class="side-pct">${pctB}%</span></div>
+            <div class="progress"><div class="fill2" style="width:${pctB}%"></div></div>
+          </div>
+        </div>
+        <div class="detail-meta">
+          <span>💬 ${stats.opinionCount} arguments</span>
+          <span>▲ ${formatK(stats.voteCount)} votes total</span>
+          <span>🕒 opened ${timeAgo(t.createdAt)}</span>
+        </div>
+      </div>
+
+      <div class="opinion-form">
+        <h4>Add your argument</h4>
+        <textarea id="opText" placeholder="Make your case…"></textarea>
+        <div class="opinion-form-row">
+          <input type="text" id="opAuthor" placeholder="Your name (optional)">
+          <select id="opSide">
+            <option value="a">${escapeHtml(labels[0])}</option>
+            <option value="b">${escapeHtml(labels[1])}</option>
+          </select>
+          <button class="post-btn" id="submitOpinion">Post Argument</button>
+        </div>
+      </div>
+
+      <div class="opinions-grid">
+        <div class="opinions-col">
+          ${ sideA.length ? sideA.map((o,i)=>opinionRow(o, i===0)).join('') : `<div class="empty-state">No arguments for ${escapeHtml(labels[0])} yet.</div>` }
+        </div>
+        <div class="opinions-col">
+          ${ sideB.length ? sideB.map((o,i)=>opinionRow(o, i===0)).join('') : `<div class="empty-state">No arguments for ${escapeHtml(labels[1])} yet.</div>` }
+        </div>
+      </div>
+    `;
+  } else {
+    const opinions = [...state.detailOpinions].sort((a,b)=>b.votes-a.votes);
+    body = `
+      <div class="detail-card">
+        <div class="tag">${escapeHtml(t.tag||'General')}</div>
+        <div class="title">${escapeHtml(t.title)}</div>
+        ${t.description ? `<div class="desc" style="margin-bottom:0;">${escapeHtml(t.description)}</div>` : ''}
+        <div class="detail-meta">
+          <span>💬 ${stats.opinionCount} opinions</span>
+          <span>▲ ${formatK(stats.voteCount)} votes total</span>
+          <span>🕒 opened ${timeAgo(t.createdAt)}</span>
+        </div>
+      </div>
+
+      <div class="opinion-form">
+        <h4>Add your opinion</h4>
+        <textarea id="opText" placeholder="What do you think?"></textarea>
+        <div class="opinion-form-row">
+          <input type="text" id="opAuthor" placeholder="Your name (optional)">
+          <button class="post-btn" id="submitOpinion">Post Opinion</button>
+        </div>
+      </div>
+
+      <div class="opinions-col">
+        ${ opinions.length ? opinions.map((o,i)=>opinionRow(o, i===0)).join('') : `<div class="empty-state">No opinions yet. Add the first one above.</div>` }
+      </div>
+    `;
+  }
+
+  return `
+    <div class="wrapper" style="grid-template-columns:1fr;max-width:820px;">
+      <div>
+        <button class="back-btn" id="backHome">← Back to OpinionHub</button>
+        ${body}
+      </div>
+    </div>
+  `;
+}
+
+function bindEvents(){
+  const logo = document.getElementById('logoHome');
+  if(logo) logo.onclick = () => { state.route={view:'home',id:null}; render(); };
+
+  document.querySelectorAll('#navTabs button').forEach(b=>{
+    b.onclick = () => {
+      state.filter = b.dataset.filter;
+      state.route = { view:'home', id:null };
+      render();
+    };
+  });
+
+  const back = document.getElementById('backHome');
+  if(back) back.onclick = () => { state.route={view:'home',id:null}; render(); };
+
+  document.querySelectorAll('[data-open]').forEach(el=>{
+    el.onclick = () => { state.route = { view:'detail', id: el.dataset.open }; render(); };
+  });
+
+  const search = document.getElementById('searchInput');
+  if(search){
+    search.oninput = () => { state.search = search.value; renderInPlace(); };
+  }
+
+  const btnT = document.getElementById('btnNewTopic');
+  if(btnT) btnT.onclick = () => openNewModal('topic');
+  const btnD = document.getElementById('btnNewDebate');
+  if(btnD) btnD.onclick = () => openNewModal('debate');
+
+  const submitBtn = document.getElementById('submitOpinion');
+  if(submitBtn) submitBtn.onclick = submitOpinion;
+
+  document.querySelectorAll('[data-vote]').forEach(el=>{
+    el.onclick = () => castVote(el.dataset.vote);
+  });
+}
+
+// re-render just the feed area on search keystrokes without stealing input focus
+function renderInPlace(){
+  const root = document.getElementById('root');
+  root.innerHTML = renderHome();
+  bindEvents();
+  const search = document.getElementById('searchInput');
+  if(search){
+    search.focus();
+    search.setSelectionRange(search.value.length, search.value.length);
+  }
+}
+
+async function submitOpinion(){
+  const t = state.topics.find(x=>x.id===state.route.id);
+  const textEl = document.getElementById('opText');
+  const authorEl = document.getElementById('opAuthor');
+  const sideEl = document.getElementById('opSide');
+  const text = textEl.value.trim();
+  if(!text) return;
+  const op = {
+    id: uid(),
+    text,
+    author: authorEl.value.trim(),
+    votes: 0,
+    side: t.type==='debate' ? (sideEl ? sideEl.value : 'a') : null,
+    createdAt: Date.now(),
+  };
+  state.detailOpinions.push(op);
+  await saveOpinions(t.id);
+
+  const stats = ensureStats(t);
+  stats.opinionCount += 1;
+  await saveTopics();
+
+  render();
+}
+
+async function castVote(opinionId){
+  if(state.votedThisSession.has(opinionId)) return;
+  const op = state.detailOpinions.find(o=>o.id===opinionId);
+  if(!op) return;
+  op.votes += 1;
+  state.votedThisSession.add(opinionId);
+  await saveOpinions(state.route.id);
+
+  const t = state.topics.find(x=>x.id===state.route.id);
+  const stats = ensureStats(t);
+  stats.voteCount += 1;
+  if(t.type==='debate'){
+    if(op.side==='a') stats.sideAVotes += 1; else stats.sideBVotes += 1;
+  }
+  await saveTopics();
+
+  render();
+}
+
+function openNewModal(defaultType){
+  const wrap = document.createElement('div');
+  wrap.className = 'overlay';
+  wrap.innerHTML = `
+    <div class="modal">
+      <h2>Open a new ${defaultType === 'debate' ? 'debate' : 'topic'}</h2>
+      <label>Type</label>
+      <div class="type-pick">
+        <button type="button" data-type="topic">Topic</button>
+        <button type="button" data-type="debate">Debate</button>
+      </div>
+      <label>Category / Tag</label>
+      <input type="text" id="newTag" placeholder="e.g. Politics, Technology">
+      <label>Title</label>
+      <input type="text" id="newTitle" placeholder="e.g. What should be done about the Rohingya crisis?">
+      <label>Description (optional)</label>
+      <textarea id="newDesc" placeholder="A sentence or two of context…"></textarea>
+      <div id="sideLabelsBlock" style="display:none;">
+        <label>Side labels</label>
+        <div class="side-labels-row">
+          <input type="text" id="sideALabel" placeholder="Side A" value="For">
+          <input type="text" id="sideBLabel" placeholder="Side B" value="Against">
+        </div>
+      </div>
+      <label>Your name (optional)</label>
+      <input type="text" id="newAuthor" placeholder="Anonymous">
+      <div class="modal-foot">
+        <button class="cancel-btn" id="cancelNew">Cancel</button>
+        <button class="post-btn" id="confirmNew">Open it</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrap);
+
+  let pickedType = defaultType;
+  const syncTypeButtons = () => {
+    wrap.querySelectorAll('[data-type]').forEach(b=>{
+      b.classList.toggle('picked', b.dataset.type===pickedType);
+    });
+    document.getElementById('sideLabelsBlock').style.display = pickedType==='debate' ? 'block' : 'none';
+  };
+  wrap.querySelectorAll('[data-type]').forEach(btn=>{
+    btn.onclick = () => { pickedType = btn.dataset.type; syncTypeButtons(); };
+  });
+  syncTypeButtons();
+
+  document.getElementById('cancelNew').onclick = () => wrap.remove();
+  wrap.onclick = (e) => { if(e.target===wrap) wrap.remove(); };
+
+  document.getElementById('confirmNew').onclick = async () => {
+    const title = document.getElementById('newTitle').value.trim();
+    if(!title) return;
+    const desc = document.getElementById('newDesc').value.trim();
+    const tag = document.getElementById('newTag').value.trim();
+    const author = document.getElementById('newAuthor').value.trim();
+    const topic = {
+      id: uid(),
+      title, description: desc, tag, author,
+      type: pickedType,
+      createdAt: Date.now(),
+      stats: { opinionCount:0, voteCount:0, sideAVotes:0, sideBVotes:0 },
+    };
+    if(pickedType==='debate'){
+      const a = document.getElementById('sideALabel').value.trim() || 'Side A';
+      const b = document.getElementById('sideBLabel').value.trim() || 'Side B';
+      topic.sideLabels = [a,b];
+    }
+    state.topics.push(topic);
+    await saveTopics();
+    wrap.remove();
+    state.route = { view:'detail', id: topic.id };
+    render();
+  };
+}
+
+async function init(){
+  await loadTopics();
+  state.loading = false;
+  render();
+}
+init();
+</script>
+
+</body>
+</html>
