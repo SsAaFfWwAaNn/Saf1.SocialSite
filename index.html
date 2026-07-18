@@ -9,6 +9,68 @@
 
 <style>
 
+/* ---------- theme variables (light default) ---------- */
+:root{
+--bg-page:#F5F4EE;
+--bg-surface:#FFFFFF;
+--bg-surface-alt:#F8FAF7;
+--border:#D8DDD7;
+--border-soft:#E7ECE7;
+--border-soft2:#E3E8E3;
+--text-primary:#24332A;
+--text-secondary:#66736A;
+--text-tertiary:#9AA39C;
+--text-tertiary2:#8A968D;
+--text-footer:#7A867E;
+--text-menu:#3A4A3F;
+--accent:#2F855A;
+--accent-light:#EDF7F0;
+--accent-bright:#68D391;
+--accent-mid:#4A8F69;
+--danger-bg:#FDEEEE;
+--danger:#B8503F;
+--debate-bg:#FDEEE4;
+--debate-color:#B8623F;
+--top-bg:#F7FCF9;
+--progress-bg:#DCE6DC;
+--cancel-hover:#B8B8B8;
+--overlay-bg:rgba(20,30,24,.45);
+--shadow-card:rgba(0,0,0,.08);
+--shadow-btn:rgba(47,133,90,.18);
+color-scheme:light;
+}
+
+/* ---------- dark theme overrides ---------- */
+[data-theme="dark"]{
+--bg-page:#141B17;
+--bg-surface:#1C2521;
+--bg-surface-alt:#20302A;
+--border:#33443A;
+--border-soft:#2A3A32;
+--border-soft2:#2E3F36;
+--text-primary:#E8EDE9;
+--text-secondary:#A6B3AB;
+--text-tertiary:#7C8B82;
+--text-tertiary2:#8CA093;
+--text-footer:#7C8B82;
+--text-menu:#D3DED8;
+--accent:#48BB86;
+--accent-light:#1F3229;
+--accent-bright:#68D391;
+--accent-mid:#5FB088;
+--danger-bg:#3A2323;
+--danger:#E08877;
+--debate-bg:#3A2B1E;
+--debate-color:#E29868;
+--top-bg:#1C2A22;
+--progress-bg:#2C3B32;
+--cancel-hover:#4A5A50;
+--overlay-bg:rgba(0,0,0,.6);
+--shadow-card:rgba(0,0,0,.35);
+--shadow-btn:rgba(72,187,134,.22);
+color-scheme:dark;
+}
+
 *{
 margin:0;
 padding:0;
@@ -17,28 +79,29 @@ font-family:'Inter',sans-serif;
 }
 
 html{
-background:#F5F4EE;
+background:var(--bg-page);
 height:100%;
 }
 
 body{
-background:#F5F4EE;
-color:#24332A;
+background:var(--bg-page);
+color:var(--text-primary);
 min-height:100vh;
 min-height:100dvh;
 overscroll-behavior-y:none;
 -webkit-tap-highlight-color:transparent;
+transition:background .25s, color .25s;
 }
 
 #root{
-background:#F5F4EE;
+background:var(--bg-page);
 min-height:100vh;
 min-height:100dvh;
 }
 
 button{cursor:pointer;font-family:'Inter',sans-serif;}
 button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
-outline:2px solid #2F855A;outline-offset:2px;
+outline:2px solid var(--accent);outline-offset:2px;
 }
 
 button, .card, [data-open], .trend, .vote-arrow{
@@ -49,9 +112,9 @@ touch-action:manipulation;
 header{
 
 min-height:75px;
-background:#FFFFFF;
+background:var(--bg-surface);
 
-border-bottom:1px solid #D8DDD7;
+border-bottom:1px solid var(--border);
 
 display:flex;
 justify-content:space-between;
@@ -70,7 +133,7 @@ z-index:20;
 
 font-size:30px;
 font-weight:800;
-color:#2F855A;
+color:var(--accent);
 cursor:pointer;
 
 }
@@ -83,6 +146,13 @@ overflow-x:auto;
 -webkit-overflow-scrolling:touch;
 scrollbar-width:none;
 
+}
+
+.header-nav-group{
+display:flex;
+align-items:center;
+gap:22px;
+min-width:0;
 }
 
 nav::-webkit-scrollbar{display:none;}
@@ -98,7 +168,7 @@ border-radius:12px;
 
 font-size:15px;
 
-color:#66736A;
+color:var(--text-secondary);
 
 transition:.25s;
 
@@ -109,14 +179,14 @@ flex-shrink:0;
 
 @media (hover:hover) and (pointer:fine){
 nav button:hover{
-background:#EDF7F0;
-color:#2F855A;
+background:var(--accent-light);
+color:var(--accent);
 }
 }
 
 .active{
 
-background:#2F855A;
+background:var(--accent);
 
 color:white;
 
@@ -124,9 +194,217 @@ font-weight:700;
 
 }
 
+/* ---------- header right: theme toggle, notifications, auth ---------- */
+.header-right{
+display:flex;
+align-items:center;
+gap:10px;
+flex-shrink:0;
+}
+
+.icon-btn{
+background:none;
+border:1px solid var(--border);
+color:var(--text-secondary);
+width:40px;
+height:40px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+flex-shrink:0;
+transition:.2s;
+}
+@media (hover:hover) and (pointer:fine){
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+}
+
+.notif-wrap{position:relative;}
+.notif-badge{
+position:absolute;
+top:-4px;
+right:-4px;
+background:var(--danger);
+color:white;
+font-size:10.5px;
+font-weight:800;
+min-width:17px;
+height:17px;
+border-radius:999px;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:0 4px;
+line-height:1;
+}
+.notif-dropdown{
+display:none;
+position:absolute;
+top:calc(100% + 8px);
+right:0;
+background:var(--bg-surface);
+border:1px solid var(--border);
+border-radius:16px;
+box-shadow:0 18px 40px var(--shadow-card);
+width:340px;
+max-width:calc(100vw - 32px);
+max-height:420px;
+overflow-y:auto;
+z-index:40;
+}
+.notif-dropdown.open{display:block;}
+.notif-head{
+padding:14px 16px;
+border-bottom:1px solid var(--border-soft);
+font-weight:700;
+font-size:14px;
+color:var(--text-primary);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.notif-head button{
+background:none;
+border:none;
+color:var(--accent);
+font-size:12.5px;
+font-weight:700;
+}
+.notif-item{
+padding:12px 16px;
+border-bottom:1px solid var(--border-soft);
+font-size:13px;
+color:var(--text-primary);
+line-height:1.5;
+cursor:pointer;
+}
+.notif-item:last-child{border-bottom:none;}
+.notif-item.unread{background:var(--accent-light);}
+@media (hover:hover) and (pointer:fine){
+.notif-item:hover{background:var(--bg-surface-alt);}
+}
+.notif-item .notif-time{
+display:block;
+color:var(--text-tertiary);
+font-size:11.5px;
+margin-top:3px;
+}
+.notif-empty{
+padding:30px 16px;
+text-align:center;
+color:var(--text-tertiary);
+font-size:13px;
+}
+
+.auth-wrap{position:relative;}
+.signin-btn{
+display:flex;
+align-items:center;
+gap:8px;
+background:var(--bg-surface);
+border:1px solid var(--border);
+color:var(--text-primary);
+padding:9px 16px;
+border-radius:12px;
+font-weight:700;
+font-size:14px;
+white-space:nowrap;
+}
+@media (hover:hover) and (pointer:fine){
+.signin-btn:hover{border-color:var(--accent);}
+}
+.avatar-btn{
+display:flex;
+align-items:center;
+gap:8px;
+background:none;
+border:1px solid var(--border);
+padding:5px 12px 5px 5px;
+border-radius:999px;
+}
+@media (hover:hover) and (pointer:fine){
+.avatar-btn:hover{border-color:var(--accent);}
+}
+.avatar-img{
+width:30px;
+height:30px;
+border-radius:999px;
+object-fit:cover;
+background:var(--accent-light);
+}
+.avatar-fallback{
+width:30px;
+height:30px;
+border-radius:999px;
+background:var(--accent);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+font-weight:800;
+}
+.avatar-name{font-size:13.5px;font-weight:600;color:var(--text-primary);}
+.user-dropdown{
+display:none;
+position:absolute;
+top:calc(100% + 8px);
+right:0;
+background:var(--bg-surface);
+border:1px solid var(--border);
+border-radius:14px;
+box-shadow:0 18px 40px var(--shadow-card);
+min-width:200px;
+overflow:hidden;
+z-index:40;
+}
+.user-dropdown.open{display:block;}
+.user-dropdown .ud-info{padding:14px 16px;border-bottom:1px solid var(--border-soft);}
+.user-dropdown .ud-name{font-weight:700;font-size:14px;color:var(--text-primary);}
+.user-dropdown .ud-email{font-size:12px;color:var(--text-tertiary);margin-top:2px;}
+.user-dropdown button.menu-item{width:100%;}
+
+/* ---------- report / edit modal extras ---------- */
+.report-btn{
+background:none;
+border:1px solid var(--border);
+color:var(--text-tertiary2);
+padding:8px 13px;
+border-radius:999px;
+font-size:12.5px;
+font-weight:600;
+display:inline-flex;
+align-items:center;
+gap:5px;
+}
+@media (hover:hover) and (pointer:fine){
+.report-btn:hover{border-color:var(--danger);color:var(--danger);}
+}
+.auth-required-note{
+font-size:12.5px;
+color:var(--text-tertiary);
+margin-top:10px;
+}
+.posting-as{
+font-size:12.5px;
+color:var(--text-tertiary);
+margin-bottom:10px;
+}
+.modal select#reportReason{
+width:100%;
+padding:13px 14px;
+border-radius:14px;
+border:1px solid var(--border);
+font-size:14px;
+outline:none;
+background:var(--bg-surface);
+color:var(--text-primary);
+}
+
 .wrapper{
 
-background:#F5F4EE;
+background:var(--bg-page);
 max-width:1300px;
 
 margin:auto;
@@ -143,9 +421,9 @@ gap:25px;
 
 .sidebar{
 
-background:white;
+background:var(--bg-surface);
 
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 
 border-radius:22px;
 
@@ -169,7 +447,7 @@ padding:14px;
 
 margin-bottom:12px;
 
-background:#2F855A;
+background:var(--accent);
 
 color:white;
 
@@ -188,14 +466,14 @@ transition:.25s;
 
 transform:translateY(-2px);
 
-box-shadow:0 12px 25px rgba(47,133,90,.18);
+box-shadow:0 12px 25px var(--shadow-btn);
 
 }
 }
 
 .sidebar button.ghost{
-background:#EDF7F0;
-color:#2F855A;
+background:var(--accent-light);
+color:var(--accent);
 }
 
 .search{
@@ -212,15 +490,15 @@ padding:15px;
 
 border-radius:16px;
 
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 
-background:white;
+background:var(--bg-surface);
 
 outline:none;
 
 font-size:15px;
 
-color:#24332A;
+color:var(--text-primary);
 
 }
 
@@ -236,9 +514,9 @@ gap:22px;
 
 .card{
 
-background:white;
+background:var(--bg-surface);
 
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 
 border-radius:22px;
 
@@ -255,9 +533,9 @@ cursor:pointer;
 
 transform:translateY(-5px);
 
-box-shadow:0 18px 35px rgba(0,0,0,.08);
+box-shadow:0 18px 35px var(--shadow-card);
 
-border-color:#68D391;
+border-color:var(--accent-bright);
 
 }
 }
@@ -270,9 +548,9 @@ padding:6px 13px;
 
 border-radius:999px;
 
-background:#EDF7F0;
+background:var(--accent-light);
 
-color:#2F855A;
+color:var(--accent);
 
 font-size:13px;
 
@@ -283,26 +561,31 @@ margin-bottom:18px;
 }
 
 .tag.debate-tag{
-background:#FDEEE4;
-color:#B8623F;
+background:var(--debate-bg);
+color:var(--debate-color);
 }
 
 .card-top-row{
 display:flex;
-align-items:center;
+align-items:flex-start;
 justify-content:space-between;
 gap:10px;
-margin-bottom:4px;
+margin-bottom:12px;
 }
 .card-top-row .tag{margin-bottom:0;}
+.card-author{
+font-size:12.5px;
+color:var(--text-tertiary2);
+margin-bottom:14px;
+}
 
 .menu-wrap{
 position:relative;
 }
 .menu-btn{
 background:none;
-border:1px solid #D8DDD7;
-color:#66736A;
+border:1px solid var(--border);
+color:var(--text-secondary);
 width:32px;
 height:32px;
 border-radius:999px;
@@ -313,17 +596,17 @@ align-items:center;
 justify-content:center;
 }
 @media (hover:hover) and (pointer:fine){
-.menu-btn:hover{border-color:#2F855A;color:#2F855A;}
+.menu-btn:hover{border-color:var(--accent);color:var(--accent);}
 }
 .menu-dropdown{
 display:none;
 position:absolute;
 top:calc(100% + 6px);
 right:0;
-background:white;
-border:1px solid #D8DDD7;
+background:var(--bg-surface);
+border:1px solid var(--border);
 border-radius:12px;
-box-shadow:0 12px 28px rgba(0,0,0,.12);
+box-shadow:0 12px 28px var(--shadow-card);
 min-width:150px;
 overflow:hidden;
 z-index:30;
@@ -337,15 +620,15 @@ padding:11px 14px;
 background:none;
 border:none;
 font-size:13.5px;
-color:#3A4A3F;
+color:var(--text-menu);
 font-weight:600;
 }
 @media (hover:hover) and (pointer:fine){
-.menu-item:hover{background:#F5F4EE;}
+.menu-item:hover{background:var(--bg-page);}
 }
-.menu-item.danger{color:#B8503F;}
+.menu-item.danger{color:var(--danger);}
 @media (hover:hover) and (pointer:fine){
-.menu-item.danger:hover{background:#FDEEEE;}
+.menu-item.danger:hover{background:var(--danger-bg);}
 }
 
 .title{
@@ -360,7 +643,7 @@ margin-bottom:12px;
 
 .desc{
 
-color:#66736A;
+color:var(--text-secondary);
 
 line-height:1.7;
 
@@ -388,30 +671,30 @@ gap:20px;
 
 font-size:14px;
 
-color:#66736A;
+color:var(--text-secondary);
 
 }
 
 .vote{
 
-background:#EDF7F0;
+background:var(--accent-light);
 
 padding:9px 16px;
 
 border-radius:999px;
 
-color:#2F855A;
+color:var(--accent);
 
 font-weight:700;
 
 }
 
 .vote-topic-btn{
-background:#EDF7F0;
+background:var(--accent-light);
 border:1px solid transparent;
 padding:9px 16px;
 border-radius:999px;
-color:#2F855A;
+color:var(--accent);
 font-weight:700;
 font-size:14px;
 display:inline-flex;
@@ -419,16 +702,16 @@ align-items:center;
 gap:6px;
 white-space:nowrap;
 }
-.vote-topic-btn.voted{background:#2F855A;color:white;}
+.vote-topic-btn.voted{background:var(--accent);color:white;}
 @media (hover:hover) and (pointer:fine){
-.vote-topic-btn:hover{border-color:#2F855A;}
+.vote-topic-btn:hover{border-color:var(--accent);}
 }
 
 .right{
 
-background:white;
+background:var(--bg-surface);
 
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 
 border-radius:22px;
 
@@ -448,7 +731,7 @@ margin-bottom:18px;
 
 padding:14px 0;
 
-border-bottom:1px solid #E7ECE7;
+border-bottom:1px solid var(--border-soft);
 
 cursor:pointer;
 
@@ -468,14 +751,14 @@ font-size:14px;
 
 padding-left:12px;
 
-color:#2F855A;
+color:var(--accent);
 
 }
 }
 
 .trend .tvotes{
 font-size:12px;
-color:#9AA39C;
+color:var(--text-tertiary);
 white-space:nowrap;
 }
 
@@ -493,13 +776,13 @@ margin-top:20px;
 
 .side{
 
-background:#F8FAF7;
+background:var(--bg-surface-alt);
 
 padding:18px;
 
 border-radius:16px;
 
-border:1px solid #E3E8E3;
+border:1px solid var(--border-soft2);
 
 }
 
@@ -507,7 +790,7 @@ border:1px solid #E3E8E3;
 
 height:10px;
 
-background:#DCE6DC;
+background:var(--progress-bg);
 
 border-radius:999px;
 
@@ -521,7 +804,7 @@ margin-top:15px;
 
 height:100%;
 
-background:#2F855A;
+background:var(--accent);
 
 }
 
@@ -529,7 +812,7 @@ background:#2F855A;
 
 height:100%;
 
-background:#68D391;
+background:var(--accent-bright);
 
 }
 
@@ -539,18 +822,18 @@ text-align:center;
 
 padding:35px;
 
-color:#7A867E;
+color:var(--text-footer);
 font-size:13px;
 
 }
 
 .empty-state{
-background:white;
-border:1px dashed #D8DDD7;
+background:var(--bg-surface);
+border:1px dashed var(--border);
 border-radius:22px;
 padding:50px 25px;
 text-align:center;
-color:#66736A;
+color:var(--text-secondary);
 }
 
 .empty-state .big{
@@ -563,19 +846,19 @@ margin-bottom:10px;
 .back-btn{
 background:none;
 border:none;
-color:#66736A;
+color:var(--text-secondary);
 font-size:14px;
 font-weight:600;
 padding:0 0 18px;
 display:inline-block;
 }
 @media (hover:hover) and (pointer:fine){
-.back-btn:hover{color:#2F855A;}
+.back-btn:hover{color:var(--accent);}
 }
 
 .detail-card{
-background:white;
-border:1px solid #D8DDD7;
+background:var(--bg-surface);
+border:1px solid var(--border);
 border-radius:22px;
 padding:32px;
 margin-bottom:24px;
@@ -584,7 +867,7 @@ margin-bottom:24px;
 .detail-meta{
 display:flex;
 gap:18px;
-color:#66736A;
+color:var(--text-secondary);
 font-size:14px;
 margin-top:10px;
 flex-wrap:wrap;
@@ -597,26 +880,26 @@ justify-content:space-between;
 margin-bottom:4px;
 }
 .side-heading h3{font-size:17px;}
-.side-pct{font-weight:800;color:#2F855A;}
-.side.b .side-pct{color:#4A8F69;}
+.side-pct{font-weight:800;color:var(--accent);}
+.side.b .side-pct{color:var(--accent-mid);}
 
 .opinion-form{
-background:white;
-border:1px solid #D8DDD7;
+background:var(--bg-surface);
+border:1px solid var(--border);
 border-radius:22px;
 padding:22px;
 margin-bottom:24px;
 }
-.opinion-form h4{margin-bottom:14px;font-size:15px;color:#66736A;}
+.opinion-form h4{margin-bottom:14px;font-size:15px;color:var(--text-secondary);}
 .opinion-form textarea{
 width:100%;
 padding:15px;
 border-radius:16px;
-border:1px solid #D8DDD7;
-background:#F8FAF7;
+border:1px solid var(--border);
+background:var(--bg-surface-alt);
 outline:none;
 font-size:15px;
-color:#24332A;
+color:var(--text-primary);
 resize:vertical;
 min-height:80px;
 }
@@ -632,20 +915,23 @@ flex:1;
 min-width:160px;
 padding:12px 14px;
 border-radius:14px;
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 font-size:14px;
 outline:none;
+background:var(--bg-surface);
+color:var(--text-primary);
 }
 .opinion-form-row select{
 padding:12px 14px;
 border-radius:14px;
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 font-size:14px;
-background:white;
+background:var(--bg-surface);
+color:var(--text-primary);
 outline:none;
 }
 .post-btn{
-background:#2F855A;
+background:var(--accent);
 color:white;
 border:none;
 padding:12px 22px;
@@ -655,21 +941,21 @@ font-size:14px;
 transition:.25s;
 }
 @media (hover:hover) and (pointer:fine){
-.post-btn:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(47,133,90,.18);}
+.post-btn:hover{transform:translateY(-2px);box-shadow:0 12px 25px var(--shadow-btn);}
 }
 
 .opinions-col{display:flex;flex-direction:column;gap:14px;}
 .opinions-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
 
 .opinion-item{
-background:white;
-border:1px solid #D8DDD7;
+background:var(--bg-surface);
+border:1px solid var(--border);
 border-radius:18px;
 padding:18px;
 display:flex;
 gap:14px;
 }
-.opinion-item.top{border-color:#68D391;background:#F7FCF9;}
+.opinion-item.top{border-color:var(--accent-bright);background:var(--top-bg);}
 .opinion-item .vote-col{
 display:flex;
 flex-direction:column;
@@ -682,24 +968,24 @@ width:52px;
 width:38px;
 height:34px;
 border-radius:10px;
-border:1px solid #D8DDD7;
-background:#F8FAF7;
-color:#2F855A;
+border:1px solid var(--border);
+background:var(--bg-surface-alt);
+color:var(--accent);
 font-size:16px;
 }
 @media (hover:hover) and (pointer:fine){
-.vote-arrow:hover{border-color:#2F855A;}
+.vote-arrow:hover{border-color:var(--accent);}
 }
-.vote-arrow.voted{background:#2F855A;color:white;border-color:#2F855A;}
-.vote-count{font-weight:800;font-size:15px;color:#24332A;}
+.vote-arrow.voted{background:var(--accent);color:white;border-color:var(--accent);}
+.vote-count{font-weight:800;font-size:15px;color:var(--text-primary);}
 .opinion-text{font-size:15px;line-height:1.6;margin-bottom:8px;}
-.opinion-author{font-size:12.5px;color:#8A968D;}
+.opinion-author{font-size:12.5px;color:var(--text-tertiary2);}
 .top-badge{
 display:inline-block;
 font-size:11px;
 font-weight:800;
-color:#2F855A;
-background:#EDF7F0;
+color:var(--accent);
+background:var(--accent-light);
 padding:3px 9px;
 border-radius:999px;
 margin-bottom:8px;
@@ -711,7 +997,7 @@ letter-spacing:.3px;
 .overlay{
 position:fixed;
 inset:0;
-background:rgba(20,30,24,.45);
+background:var(--overlay-bg);
 display:flex;
 align-items:center;
 justify-content:center;
@@ -719,7 +1005,7 @@ padding:20px;
 z-index:50;
 }
 .modal{
-background:white;
+background:var(--bg-surface);
 border-radius:22px;
 width:100%;
 max-width:480px;
@@ -732,55 +1018,57 @@ overflow-y:auto;
 display:block;
 font-size:13px;
 font-weight:700;
-color:#66736A;
+color:var(--text-secondary);
 margin:16px 0 6px;
 }
 .modal input[type=text], .modal textarea{
 width:100%;
 padding:13px 14px;
 border-radius:14px;
-border:1px solid #D8DDD7;
+border:1px solid var(--border);
 font-size:14px;
 outline:none;
+background:var(--bg-surface);
+color:var(--text-primary);
 }
 .modal textarea{min-height:80px;resize:vertical;}
 .type-pick{display:flex;gap:10px;margin-top:4px;}
 .type-pick button{
 flex:1;
-background:#F8FAF7;
-border:1px solid #D8DDD7;
-color:#66736A;
+background:var(--bg-surface-alt);
+border:1px solid var(--border);
+color:var(--text-secondary);
 padding:12px;
 border-radius:14px;
 font-weight:700;
 font-size:14px;
 }
-.type-pick button.picked{border-color:#2F855A;color:#2F855A;background:#EDF7F0;}
+.type-pick button.picked{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
 .side-labels-row{display:flex;gap:10px;}
 .side-labels-row input{flex:1;}
 .modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
 .cancel-btn{
 background:none;
-border:1px solid #D8DDD7;
-color:#66736A;
+border:1px solid var(--border);
+color:var(--text-secondary);
 padding:12px 18px;
 border-radius:14px;
 font-size:14px;
 font-weight:600;
 }
 @media (hover:hover) and (pointer:fine){
-.cancel-btn:hover{border-color:#B8B8B8;}
+.cancel-btn:hover{border-color:var(--cancel-hover);}
 }
 
 /* tap feedback for touch devices, since hover states are disabled above */
 @media (hover:none) and (pointer:coarse){
-.card:active{transform:scale(0.98);border-color:#68D391;}
+.card:active{transform:scale(0.98);border-color:var(--accent-bright);}
 .sidebar button:active{transform:scale(0.96);}
 .post-btn:active{transform:scale(0.97);}
 .vote-arrow:active{transform:scale(0.9);}
-.trend:active{color:#2F855A;}
-nav button:active{background:#EDF7F0;color:#2F855A;}
-.cancel-btn:active{border-color:#B8B8B8;}
+.trend:active{color:var(--accent);}
+nav button:active{background:var(--accent-light);color:var(--accent);}
+.cancel-btn:active{border-color:var(--cancel-hover);}
 }
 
 @media(max-width:700px){
@@ -837,11 +1125,18 @@ align-items:stretch;
 gap:0;
 padding:14px 16px calc(10px + env(safe-area-inset-top));
 padding-top:calc(14px + env(safe-area-inset-top));
+position:sticky;
 }
 
 .logo{font-size:22px;margin-bottom:10px;}
 
-nav{gap:8px;padding-bottom:2px;margin:0 -16px;padding-left:16px;padding-right:16px;}
+.header-right{
+position:absolute;
+top:calc(12px + env(safe-area-inset-top));
+right:16px;
+}
+
+nav{gap:8px;padding-bottom:2px;margin:0 -16px;padding-left:16px;padding-right:16px;max-width:calc(100% - 90px);}
 
 nav button{padding:9px 14px;font-size:13.5px;}
 
@@ -893,6 +1188,14 @@ border-radius:16px;
 
 .back-btn{padding:6px 0 14px;font-size:13.5px;}
 
+.header-right{gap:6px;}
+.icon-btn{width:34px;height:34px;font-size:15px;border-radius:10px;}
+.avatar-name{display:none;}
+.avatar-btn{padding:4px;}
+.signin-btn span.signin-label{display:none;}
+.signin-btn{padding:8px 10px;}
+.notif-dropdown{width:300px;}
+
 footer{padding:24px 16px;font-size:12px;}
 
 /* prevent iOS auto-zoom on focus by keeping form fields >=16px */
@@ -919,6 +1222,8 @@ input, textarea, select{font-size:16px;}
 Viewpoint
 </div>
 
+<div class="header-nav-group">
+
 <nav id="navTabs">
 
 <button class="active" data-filter="home">Home</button>
@@ -930,6 +1235,10 @@ Viewpoint
 <button data-filter="trending">Trending</button>
 
 </nav>
+
+<div class="header-right" id="headerRight"></div>
+
+</div>
 
 </header>
 
@@ -958,7 +1267,7 @@ if(!CONFIG_IS_PLACEHOLDER){
   supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
-const KEYS = { myTopics:'opinionhub-my-topics', myOpinions:'opinionhub-my-opinions' };
+const THEME_KEY = 'viewpoint-theme';
 
 let state = {
   topics: [],
@@ -968,12 +1277,23 @@ let state = {
   filter: 'home',
   search: '',
   route: { view:'home', id:null },
-  votedThisSession: new Set(),
-  votedTopicsSession: new Set(),
   detailOpinions: [],
-  myTopicIds: new Set(),
-  myOpinionIds: new Set(),
   openMenuFor: null,
+
+  // auth
+  user: null,          // supabase auth user object, or null if signed out
+  profile: null,        // { id, display_name, avatar_url }
+  authReady: false,     // becomes true once we've checked for an existing session
+  userMenuOpen: false,
+
+  // per-user vote tracking (loaded from the DB, not just this browser session)
+  votedTopicIds: new Set(),     // topic ids the current user has voted for
+  votedOpinionIds: new Set(),   // opinion ids the current user has voted for
+
+  // notifications
+  notifications: [],
+  unreadCount: 0,
+  notifOpen: false,
 };
 
 function formatK(n){
@@ -996,19 +1316,41 @@ function escapeHtml(str){
   return d.innerHTML;
 }
 
-function renderMenu(menuId, deleteAttr, deleteId, label){
+/**
+ * Renders the "⋯" dropdown menu on a topic/opinion card.
+ * - Owners see Edit (topics only, opinions aren't editable) + Delete.
+ * - Everyone signed in sees Report.
+ * menuId:      unique id so we know which dropdown is open
+ * kind:        'topic' | 'opinion'
+ * targetId:    id of the topic/opinion this menu belongs to
+ * isOwner:     whether the current user owns this content
+ * label:       human label for the delete confirm text, e.g. "topic" / "debate" / "opinion"
+ */
+function renderMenu(menuId, kind, targetId, isOwner, label){
   const open = state.openMenuFor === menuId;
+  const deleteAttr = kind === 'topic' ? 'delete-topic' : 'delete-opinion';
+  const items = [];
+  if(isOwner && kind === 'topic'){
+    items.push(`<button class="menu-item" data-edit-topic="${targetId}">✏️ Edit ${label}</button>`);
+  }
+  if(state.user){
+    items.push(`<button class="menu-item" data-report="${kind}:${targetId}">🚩 Report</button>`);
+  }
+  if(isOwner){
+    items.push(`<button class="menu-item danger" data-${deleteAttr}="${targetId}">🗑 Delete ${label}</button>`);
+  }
+  if(!items.length) return '';
   return `
     <div class="menu-wrap">
       <button class="menu-btn" data-menu-toggle="${menuId}" aria-label="More options">⋯</button>
       <div class="menu-dropdown ${open ? 'open':''}">
-        <button class="menu-item danger" data-${deleteAttr}="${deleteId}">🗑 ${label}</button>
+        ${items.join('')}
       </div>
     </div>
   `;
 }
 
-/* ---------- local-only helpers (ownership tracking, not backend data) ---------- */
+/* ---------- generic local storage helpers ---------- */
 
 function storageGet(key){
   try{
@@ -1020,13 +1362,141 @@ function storageSet(key, value){
   try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
 }
 
-function loadMyIds(){
-  state.myTopicIds = new Set(storageGet(KEYS.myTopics) || []);
-  state.myOpinionIds = new Set(storageGet(KEYS.myOpinions) || []);
+/* ---------- theme (dark mode) ---------- */
+
+function initTheme(){
+  let theme = null;
+  try{ theme = localStorage.getItem(THEME_KEY); }catch(e){}
+  if(!theme){
+    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  applyTheme(theme);
 }
-function persistMyIds(){
-  storageSet(KEYS.myTopics, [...state.myTopicIds]);
-  storageSet(KEYS.myOpinions, [...state.myOpinionIds]);
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+}
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+  renderHeader();
+}
+
+/* ---------- auth ---------- */
+
+function displayName(){
+  if(!state.profile) return 'Anonymous';
+  return state.profile.display_name || 'Anonymous';
+}
+
+async function signInWithGoogle(){
+  if(!supabase) return;
+  await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+}
+
+async function signOut(){
+  if(!supabase) return;
+  await supabase.auth.signOut();
+  state.user = null;
+  state.profile = null;
+  state.votedTopicIds = new Set();
+  state.votedOpinionIds = new Set();
+  state.notifications = [];
+  state.unreadCount = 0;
+  state.userMenuOpen = false;
+  render();
+}
+
+/** Creates/updates the profiles row for the signed-in user so we have a stable display name + avatar to show under posts. */
+async function upsertProfile(user){
+  const meta = user.user_metadata || {};
+  const profileRow = {
+    id: user.id,
+    display_name: meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : 'Anonymous'),
+    avatar_url: meta.avatar_url || meta.picture || null,
+    email: user.email || null,
+  };
+  try{
+    const { data, error } = await supabase.from('profiles').upsert(profileRow).select().single();
+    if(error) throw error;
+    state.profile = data;
+  }catch(e){
+    console.error('Failed to upsert profile:', e);
+    state.profile = profileRow; // fall back to what we have locally
+  }
+}
+
+async function loadUserVotes(){
+  if(!state.user) return;
+  try{
+    const { data: tv } = await supabase.from('topic_votes').select('topic_id').eq('voter_id', state.user.id);
+    state.votedTopicIds = new Set((tv||[]).map(r=>r.topic_id));
+  }catch(e){ console.error('Failed to load topic votes:', e); }
+}
+
+async function loadUserOpinionVotes(opinionIds){
+  if(!state.user || !opinionIds.length){ state.votedOpinionIds = new Set(); return; }
+  try{
+    const { data } = await supabase.from('opinion_votes').select('opinion_id').eq('voter_id', state.user.id).in('opinion_id', opinionIds);
+    state.votedOpinionIds = new Set((data||[]).map(r=>r.opinion_id));
+  }catch(e){ console.error('Failed to load opinion votes:', e); }
+}
+
+function requireLogin(action){
+  if(state.user) return true;
+  showConfirm(`You need to sign in with Google to ${action}.`, 'Sign in', () => signInWithGoogle());
+  return false;
+}
+
+/* ---------- notifications ---------- */
+
+async function loadNotifications(){
+  if(!state.user) return;
+  try{
+    const { data, error } = await supabase.from('notifications')
+      .select('*')
+      .eq('recipient_id', state.user.id)
+      .order('created_at', { ascending:false })
+      .limit(30);
+    if(error) throw error;
+    state.notifications = data || [];
+    state.unreadCount = state.notifications.filter(n=>!n.is_read).length;
+  }catch(e){
+    console.error('Failed to load notifications:', e);
+  }
+}
+
+async function markNotificationRead(id){
+  const n = state.notifications.find(x=>x.id===id);
+  if(!n || n.is_read) return;
+  n.is_read = true;
+  state.unreadCount = Math.max(0, state.unreadCount - 1);
+  renderHeader();
+  try{
+    await supabase.from('notifications').update({ is_read:true }).eq('id', id);
+  }catch(e){ console.error('Failed to mark notification read:', e); }
+}
+
+async function markAllNotificationsRead(){
+  const hadUnread = state.notifications.some(n=>!n.is_read);
+  state.notifications.forEach(n=>n.is_read = true);
+  state.unreadCount = 0;
+  renderHeader();
+  if(!hadUnread || !state.user) return;
+  try{
+    await supabase.from('notifications').update({ is_read:true }).eq('recipient_id', state.user.id).eq('is_read', false);
+  }catch(e){ console.error('Failed to mark all notifications read:', e); }
+}
+
+function notifText(n){
+  const actor = escapeHtml(n.actor_name || 'Someone');
+  if(n.type === 'reply'){
+    return `<strong>${actor}</strong> replied to your ${escapeHtml(n.context_label||'topic')}: "${escapeHtml((n.message||'').slice(0,80))}"`;
+  }
+  return escapeHtml(n.message || 'You have a new notification.');
 }
 
 /* ---------- Supabase data layer ---------- */
@@ -1038,6 +1508,7 @@ function mapTopicRow(row){
     description: row.description,
     tag: row.tag,
     author: row.author,
+    userId: row.user_id,
     type: row.type,
     sideLabels: row.side_labels,
     createdAt: new Date(row.created_at).getTime(),
@@ -1056,6 +1527,7 @@ function mapOpinionRow(row){
     id: row.id,
     text: row.text,
     author: row.author,
+    userId: row.user_id,
     side: row.side,
     votes: row.votes,
     createdAt: new Date(row.created_at).getTime(),
@@ -1073,6 +1545,7 @@ async function loadTopics(){
     state.topics = [];
     state.loadError = true;
   }
+  await loadUserVotes();
 }
 
 async function loadOpinions(topicId){
@@ -1084,6 +1557,7 @@ async function loadOpinions(topicId){
     console.error('Failed to load opinions:', e);
     state.detailOpinions = [];
   }
+  await loadUserOpinionVotes(state.detailOpinions.map(o=>o.id));
 }
 
 function ensureStats(t){
@@ -1096,6 +1570,7 @@ function ensureStats(t){
 
 async function render(){
   const root = document.getElementById('root');
+  renderHeader();
 
   if(state.setupNeeded){
     root.innerHTML = `
@@ -1136,6 +1611,111 @@ async function render(){
   bindEvents();
 }
 
+/* ---------- header: theme toggle + notifications + auth ---------- */
+
+function renderHeader(){
+  const el = document.getElementById('headerRight');
+  if(!el) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  const themeBtn = `<button class="icon-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle dark mode">${isDark ? '☀️' : '🌙'}</button>`;
+
+  let notifBtn = '';
+  if(state.user){
+    notifBtn = `
+      <div class="notif-wrap">
+        <button class="icon-btn" id="notifBtn" aria-label="Notifications">🔔${state.unreadCount>0 ? `<span class="notif-badge">${state.unreadCount>9?'9+':state.unreadCount}</span>`:''}</button>
+        <div class="notif-dropdown ${state.notifOpen?'open':''}" id="notifDropdown">
+          <div class="notif-head">
+            <span>Notifications</span>
+            <button id="markAllReadBtn">Mark all read</button>
+          </div>
+          ${ state.notifications.length ? state.notifications.map(n=>`
+            <div class="notif-item ${n.is_read?'':'unread'}" data-notif="${n.id}" data-open-topic="${n.topic_id||''}">
+              ${notifText(n)}
+              <span class="notif-time">${timeAgo(new Date(n.created_at).getTime())}</span>
+            </div>
+          `).join('') : `<div class="notif-empty">No notifications yet.</div>` }
+        </div>
+      </div>
+    `;
+  }
+
+  let authBtn;
+  if(!state.authReady){
+    authBtn = '';
+  } else if(state.user){
+    const av = state.profile && state.profile.avatar_url
+      ? `<img class="avatar-img" src="${escapeHtml(state.profile.avatar_url)}" alt="">`
+      : `<div class="avatar-fallback">${escapeHtml(displayName().slice(0,1).toUpperCase())}</div>`;
+    authBtn = `
+      <div class="auth-wrap">
+        <button class="avatar-btn" id="userMenuBtn">${av}<span class="avatar-name">${escapeHtml(displayName())}</span></button>
+        <div class="user-dropdown ${state.userMenuOpen?'open':''}" id="userDropdown">
+          <div class="ud-info">
+            <div class="ud-name">${escapeHtml(displayName())}</div>
+            <div class="ud-email">${escapeHtml((state.profile && state.profile.email) || '')}</div>
+          </div>
+          <button class="menu-item" id="signOutBtn">Sign out</button>
+        </div>
+      </div>
+    `;
+  } else {
+    authBtn = `<button class="signin-btn" id="signInBtn">🔑 <span class="signin-label">Sign in with Google</span></button>`;
+  }
+
+  el.innerHTML = `${themeBtn}${notifBtn}${authBtn}`;
+  bindHeaderEvents();
+}
+
+function bindHeaderEvents(){
+  const themeBtn = document.getElementById('themeToggleBtn');
+  if(themeBtn) themeBtn.onclick = (e) => { e.stopPropagation(); toggleTheme(); };
+
+  const notifBtn = document.getElementById('notifBtn');
+  if(notifBtn) notifBtn.onclick = async (e) => {
+    e.stopPropagation();
+    state.notifOpen = !state.notifOpen;
+    state.userMenuOpen = false;
+    if(state.notifOpen) await loadNotifications();
+    renderHeader();
+  };
+  document.querySelectorAll('[data-notif]').forEach(el=>{
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const id = el.dataset.notif;
+      const topicId = el.dataset.openTopic;
+      markNotificationRead(id);
+      state.notifOpen = false;
+      if(topicId){ state.route = { view:'detail', id: topicId }; render(); }
+    };
+  });
+  const markAllBtn = document.getElementById('markAllReadBtn');
+  if(markAllBtn) markAllBtn.onclick = (e) => { e.stopPropagation(); markAllNotificationsRead(); };
+
+  const signInBtn = document.getElementById('signInBtn');
+  if(signInBtn) signInBtn.onclick = () => signInWithGoogle();
+
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  if(userMenuBtn) userMenuBtn.onclick = (e) => {
+    e.stopPropagation();
+    state.userMenuOpen = !state.userMenuOpen;
+    state.notifOpen = false;
+    renderHeader();
+  };
+  const signOutBtn = document.getElementById('signOutBtn');
+  if(signOutBtn) signOutBtn.onclick = () => signOut();
+}
+
+// clicking anywhere else closes the notification / user dropdowns
+document.addEventListener('click', () => {
+  if(state.notifOpen || state.userMenuOpen){
+    state.notifOpen = false;
+    state.userMenuOpen = false;
+    renderHeader();
+  }
+});
+
 function trendingList(){
   return [...state.topics]
     .sort((a,b)=> ensureStats(b).voteCount - ensureStats(a).voteCount)
@@ -1157,31 +1737,33 @@ function renderSidebarRight(){
 
 function renderCard(t){
   const stats = ensureStats(t);
-  const votedTopic = state.votedTopicsSession.has(t.id);
+  const votedTopic = state.votedTopicIds.has(t.id);
+  const mine = state.user && t.userId === state.user.id;
+  const authorLine = `<div class="card-author">by ${escapeHtml(t.author || 'Anonymous')}</div>`;
   if(t.type === 'debate'){
     const total = stats.sideAVotes + stats.sideBVotes;
     const pctA = total ? Math.round((stats.sideAVotes/total)*100) : 50;
     const pctB = 100 - pctA;
     const labels = t.sideLabels || ['Side A','Side B'];
-    const mine = state.myTopicIds.has(t.id);
     return `
       <div class="card" data-open="${t.id}">
         <div class="card-top-row">
-          <div class="tag debate-tag">⚔ ${escapeHtml(t.tag || 'Debate')}</div>
-          ${mine ? renderMenu('card-'+t.id, 'delete-topic', t.id, 'Delete debate') : ''}
+          <div class="title" style="margin-bottom:0;">${escapeHtml(t.title)}</div>
+          ${renderMenu('card-'+t.id, 'topic', t.id, mine, 'debate')}
         </div>
-        <div class="title">${escapeHtml(t.title)}</div>
+        <div class="tag debate-tag" style="margin-bottom:10px;">⚔ ${escapeHtml(t.tag || 'Debate')}</div>
+        ${authorLine}
         ${t.description ? `<div class="desc">${escapeHtml(t.description)}</div>` : ''}
         <div class="debate">
           <div class="side a">
             <div class="side-heading"><h3>${escapeHtml(labels[0])}</h3></div>
             <div class="progress"><div class="fill" style="width:${pctA}%"></div></div>
-            <p style="margin-top:10px;color:#2F855A;font-weight:700;">${pctA}%</p>
+            <p style="margin-top:10px;color:var(--accent);font-weight:700;">${pctA}%</p>
           </div>
           <div class="side b">
             <div class="side-heading"><h3>${escapeHtml(labels[1])}</h3></div>
             <div class="progress"><div class="fill2" style="width:${pctB}%"></div></div>
-            <p style="margin-top:10px;color:#4A8F69;font-weight:700;">${pctB}%</p>
+            <p style="margin-top:10px;color:var(--accent-mid);font-weight:700;">${pctB}%</p>
           </div>
         </div>
         <div class="bottom" style="margin-top:20px;">
@@ -1197,14 +1779,14 @@ function renderCard(t){
       </div>
     `;
   }
-  const mine = state.myTopicIds.has(t.id);
   return `
     <div class="card" data-open="${t.id}">
       <div class="card-top-row">
-        <div class="tag">${escapeHtml(t.tag || 'General')}</div>
-        ${mine ? renderMenu('card-'+t.id, 'delete-topic', t.id, 'Delete topic') : ''}
+        <div class="title" style="margin-bottom:0;">${escapeHtml(t.title)}</div>
+        ${renderMenu('card-'+t.id, 'topic', t.id, mine, 'topic')}
       </div>
-      <div class="title">${escapeHtml(t.title)}</div>
+      <div class="tag" style="margin-bottom:10px;">${escapeHtml(t.tag || 'General')}</div>
+      ${authorLine}
       ${t.description ? `<div class="desc">${escapeHtml(t.description)}</div>` : ''}
       <div class="bottom">
         <div class="stats">
@@ -1276,14 +1858,14 @@ async function renderDetail(id){
   const stats = ensureStats(t);
   const isDebate = t.type === 'debate';
   const labels = t.sideLabels || ['Side A','Side B'];
-  const mineTopic = state.myTopicIds.has(t.id);
-  const deleteTopicMenu = mineTopic ? `<div style="position:absolute;top:20px;right:20px;">${renderMenu('detail-'+t.id, 'delete-topic', t.id, 'Delete '+(isDebate?'debate':'topic'))}</div>` : '';
-  const votedTopic = state.votedTopicsSession.has(t.id);
+  const mineTopic = state.user && t.userId === state.user.id;
+  const topicMenu = `<div style="position:absolute;top:20px;right:20px;">${renderMenu('detail-'+t.id, 'topic', t.id, mineTopic, isDebate?'debate':'topic')}</div>`;
+  const votedTopic = state.votedTopicIds.has(t.id);
   const topicVoteBtn = `<button class="vote-topic-btn ${votedTopic?'voted':''}" data-vote-topic="${t.id}" style="margin-top:16px;" aria-label="${votedTopic?'Remove your vote':'Vote for this '+(isDebate?'debate':'topic')}">▲ ${votedTopic?'Voted':'Vote for this '+(isDebate?'debate':'topic')} · ${formatK(stats.topicVotes)}</button>`;
 
   const opinionRow = (op, isTop) => {
-    const voted = state.votedThisSession.has(op.id);
-    const mineOp = state.myOpinionIds.has(op.id);
+    const voted = state.votedOpinionIds.has(op.id);
+    const mineOp = state.user && op.userId === state.user.id;
     return `
       <div class="opinion-item ${isTop ? 'top':''}">
         <div class="vote-col">
@@ -1293,7 +1875,7 @@ async function renderDetail(id){
         <div style="flex:1;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
             <div>${isTop ? `<div class="top-badge">TOP</div>` : ''}</div>
-            ${mineOp ? renderMenu('opinion-'+op.id, 'delete-opinion', op.id, 'Delete') : ''}
+            ${renderMenu('opinion-'+op.id, 'opinion', op.id, mineOp, 'opinion')}
           </div>
           <div class="opinion-text">${escapeHtml(op.text)}</div>
           <div class="opinion-author">${escapeHtml(op.author || 'Anonymous')} · ${timeAgo(op.createdAt)}</div>
@@ -1301,6 +1883,10 @@ async function renderDetail(id){
       </div>
     `;
   };
+
+  const postingAs = state.user
+    ? `<div class="posting-as">Posting as <strong>${escapeHtml(displayName())}</strong></div>`
+    : `<div class="auth-required-note">🔑 <a href="#" id="opFormSignIn" style="color:var(--accent);font-weight:700;">Sign in with Google</a> to post.</div>`;
 
   let body;
   if(isDebate){
@@ -1312,9 +1898,10 @@ async function renderDetail(id){
     const pctB = 100 - pctA;
     body = `
       <div class="detail-card" style="position:relative;">
-        ${deleteTopicMenu}
-        <div class="tag debate-tag">⚔ ${escapeHtml(t.tag||'Debate')}</div>
+        ${topicMenu}
         <div class="title">${escapeHtml(t.title)}</div>
+        <div class="tag debate-tag" style="margin-bottom:10px;">⚔ ${escapeHtml(t.tag||'Debate')}</div>
+        <div class="card-author">by ${escapeHtml(t.author || 'Anonymous')}</div>
         ${t.description ? `<div class="desc" style="margin-bottom:0;">${escapeHtml(t.description)}</div>` : ''}
         <div class="debate">
           <div class="side a">
@@ -1336,9 +1923,9 @@ async function renderDetail(id){
 
       <div class="opinion-form">
         <h4>Add your argument</h4>
+        ${postingAs}
         <textarea id="opText" placeholder="Make your case…"></textarea>
         <div class="opinion-form-row">
-          <input type="text" id="opAuthor" placeholder="Your name (optional)">
           <select id="opSide">
             <option value="a">${escapeHtml(labels[0])}</option>
             <option value="b">${escapeHtml(labels[1])}</option>
@@ -1360,9 +1947,10 @@ async function renderDetail(id){
     const opinions = [...state.detailOpinions].sort((a,b)=>b.votes-a.votes);
     body = `
       <div class="detail-card" style="position:relative;">
-        ${deleteTopicMenu}
-        <div class="tag">${escapeHtml(t.tag||'General')}</div>
+        ${topicMenu}
         <div class="title">${escapeHtml(t.title)}</div>
+        <div class="tag" style="margin-bottom:10px;">${escapeHtml(t.tag||'General')}</div>
+        <div class="card-author">by ${escapeHtml(t.author || 'Anonymous')}</div>
         ${t.description ? `<div class="desc" style="margin-bottom:0;">${escapeHtml(t.description)}</div>` : ''}
         <div class="detail-meta">
           <span>💬 ${stats.opinionCount} opinions</span>
@@ -1374,9 +1962,9 @@ async function renderDetail(id){
 
       <div class="opinion-form">
         <h4>Add your opinion</h4>
+        ${postingAs}
         <textarea id="opText" placeholder="What do you think?"></textarea>
         <div class="opinion-form-row">
-          <input type="text" id="opAuthor" placeholder="Your name (optional)">
           <button class="post-btn" id="submitOpinion">Post Opinion</button>
         </div>
       </div>
@@ -1422,12 +2010,15 @@ function bindEvents(){
   }
 
   const btnT = document.getElementById('btnNewTopic');
-  if(btnT) btnT.onclick = () => openNewModal('topic');
+  if(btnT) btnT.onclick = () => { if(requireLogin('open a new topic')) openNewModal('topic'); };
   const btnD = document.getElementById('btnNewDebate');
-  if(btnD) btnD.onclick = () => openNewModal('debate');
+  if(btnD) btnD.onclick = () => { if(requireLogin('open a new debate')) openNewModal('debate'); };
 
   const submitBtn = document.getElementById('submitOpinion');
   if(submitBtn) submitBtn.onclick = submitOpinion;
+
+  const opFormSignIn = document.getElementById('opFormSignIn');
+  if(opFormSignIn) opFormSignIn.onclick = (e) => { e.preventDefault(); signInWithGoogle(); };
 
   document.querySelectorAll('[data-vote]').forEach(el=>{
     el.onclick = () => castVote(el.dataset.vote);
@@ -1453,6 +2044,24 @@ function bindEvents(){
   document.querySelectorAll('[data-delete-opinion]').forEach(el=>{
     el.onclick = (e) => { e.stopPropagation(); deleteOpinion(el.dataset.deleteOpinion); };
   });
+
+  document.querySelectorAll('[data-edit-topic]').forEach(el=>{
+    el.onclick = (e) => {
+      e.stopPropagation();
+      state.openMenuFor = null;
+      const t = state.topics.find(x=>x.id===el.dataset.editTopic);
+      if(t) openEditModal(t);
+    };
+  });
+
+  document.querySelectorAll('[data-report]').forEach(el=>{
+    el.onclick = (e) => {
+      e.stopPropagation();
+      state.openMenuFor = null;
+      const [kind, targetId] = el.dataset.report.split(':');
+      openReportModal(kind, targetId);
+    };
+  });
 }
 
 function renderInPlace(){
@@ -1469,9 +2078,9 @@ function renderInPlace(){
 let isSubmittingOpinion = false;
 async function submitOpinion(){
   if(isSubmittingOpinion) return;
+  if(!requireLogin('post')) return;
   const t = state.topics.find(x=>x.id===state.route.id);
   const textEl = document.getElementById('opText');
-  const authorEl = document.getElementById('opAuthor');
   const sideEl = document.getElementById('opSide');
   const text = textEl.value.trim();
   if(!text) return;
@@ -1482,7 +2091,8 @@ async function submitOpinion(){
   const opRow = {
     topic_id: t.id,
     text,
-    author: authorEl.value.trim(),
+    author: displayName(),
+    user_id: state.user.id,
     side: t.type==='debate' ? (sideEl ? sideEl.value : 'a') : null,
   };
 
@@ -1491,8 +2101,6 @@ async function submitOpinion(){
     if(error) throw error;
     const op = mapOpinionRow(data);
     state.detailOpinions.push(op);
-    state.myOpinionIds.add(op.id);
-    persistMyIds();
 
     const stats = ensureStats(t);
     stats.opinionCount += 1;
@@ -1548,14 +2156,15 @@ function deleteOpinion(opinionId){
       else stats.sideBVotes = Math.max(0, stats.sideBVotes - op.votes);
     }
 
-    state.myOpinionIds.delete(opinionId);
-    persistMyIds();
-    state.votedThisSession.delete(opinionId);
+    state.votedOpinionIds.delete(opinionId);
     state.openMenuFor = null;
     render();
 
     try{
-      await supabase.rpc('delete_opinion', { p_opinion_id: opinionId });
+      // RLS only allows this to succeed if the current user owns the row.
+      const { error } = await supabase.from('opinions').delete().eq('id', opinionId);
+      if(error) throw error;
+      await supabase.rpc('increment_opinion_count', { p_topic_id: t.id, p_delta: -1 }).catch(()=>{});
     }catch(e){
       console.error('Failed to delete opinion on server:', e);
     }
@@ -1568,8 +2177,6 @@ function deleteTopic(topicId){
 
   showConfirm(`Delete this ${label} and all its opinions? This can't be undone.`, 'Delete', async () => {
     state.topics = state.topics.filter(x=>x.id!==topicId);
-    state.myTopicIds.delete(topicId);
-    persistMyIds();
     state.openMenuFor = null;
 
     if(state.route.view==='detail' && state.route.id===topicId){
@@ -1578,7 +2185,10 @@ function deleteTopic(topicId){
     render();
 
     try{
-      await supabase.rpc('delete_topic_and_opinions', { p_topic_id: topicId });
+      // RLS only allows this to succeed if the current user owns the row.
+      // Opinions/votes/notifications referencing this topic are removed via ON DELETE CASCADE.
+      const { error } = await supabase.from('topics').delete().eq('id', topicId);
+      if(error) throw error;
     }catch(e){
       console.error('Failed to delete on server:', e);
     }
@@ -1586,16 +2196,17 @@ function deleteTopic(topicId){
 }
 
 async function castVote(opinionId){
+  if(!requireLogin('vote')) return;
   const op = state.detailOpinions.find(o=>o.id===opinionId);
   if(!op) return;
   const t = state.topics.find(x=>x.id===state.route.id);
   const stats = ensureStats(t);
-  const alreadyVoted = state.votedThisSession.has(opinionId);
+  const alreadyVoted = state.votedOpinionIds.has(opinionId);
   const delta = alreadyVoted ? -1 : 1;
 
   if(alreadyVoted){
     op.votes = Math.max(0, op.votes - 1);
-    state.votedThisSession.delete(opinionId);
+    state.votedOpinionIds.delete(opinionId);
     stats.voteCount = Math.max(0, stats.voteCount - 1);
     if(t.type==='debate'){
       if(op.side==='a') stats.sideAVotes = Math.max(0, stats.sideAVotes - 1);
@@ -1603,7 +2214,7 @@ async function castVote(opinionId){
     }
   } else {
     op.votes += 1;
-    state.votedThisSession.add(opinionId);
+    state.votedOpinionIds.add(opinionId);
     stats.voteCount += 1;
     if(t.type==='debate'){
       if(op.side==='a') stats.sideAVotes += 1; else stats.sideBVotes += 1;
@@ -1613,6 +2224,13 @@ async function castVote(opinionId){
   render();
 
   try{
+    if(alreadyVoted){
+      await supabase.from('opinion_votes').delete().eq('voter_id', state.user.id).eq('opinion_id', opinionId);
+    } else {
+      const { error } = await supabase.from('opinion_votes').insert({ voter_id: state.user.id, opinion_id: opinionId });
+      if(error && error.code === '23505'){ return; } // already voted server-side; state already reflects "voted"
+      if(error) throw error;
+    }
     await supabase.rpc('vote_opinion', { p_opinion_id: opinionId, p_delta: delta });
   }catch(e){
     console.error('Failed to save vote:', e);
@@ -1620,23 +2238,31 @@ async function castVote(opinionId){
 }
 
 async function toggleTopicVote(topicId){
+  if(!requireLogin('vote')) return;
   const t = state.topics.find(x=>x.id===topicId);
   if(!t) return;
   const stats = ensureStats(t);
-  const alreadyVoted = state.votedTopicsSession.has(topicId);
+  const alreadyVoted = state.votedTopicIds.has(topicId);
   const delta = alreadyVoted ? -1 : 1;
 
   if(alreadyVoted){
     stats.topicVotes = Math.max(0, stats.topicVotes - 1);
-    state.votedTopicsSession.delete(topicId);
+    state.votedTopicIds.delete(topicId);
   } else {
     stats.topicVotes += 1;
-    state.votedTopicsSession.add(topicId);
+    state.votedTopicIds.add(topicId);
   }
 
   render();
 
   try{
+    if(alreadyVoted){
+      await supabase.from('topic_votes').delete().eq('voter_id', state.user.id).eq('topic_id', topicId);
+    } else {
+      const { error } = await supabase.from('topic_votes').insert({ voter_id: state.user.id, topic_id: topicId });
+      if(error && error.code === '23505'){ return; }
+      if(error) throw error;
+    }
     await supabase.rpc('vote_topic', { p_topic_id: topicId, p_delta: delta });
   }catch(e){
     console.error('Failed to save topic vote:', e);
@@ -1649,6 +2275,7 @@ function openNewModal(defaultType){
   wrap.innerHTML = `
     <div class="modal">
       <h2>Open a new ${defaultType === 'debate' ? 'debate' : 'topic'}</h2>
+      <div class="posting-as">Posting as <strong>${escapeHtml(displayName())}</strong></div>
       <label>Type</label>
       <div class="type-pick">
         <button type="button" data-type="topic">Topic</button>
@@ -1667,8 +2294,6 @@ function openNewModal(defaultType){
           <input type="text" id="sideBLabel" placeholder="Side B" value="Side B">
         </div>
       </div>
-      <label>Your name (optional)</label>
-      <input type="text" id="newAuthor" placeholder="Anonymous">
       <div class="modal-foot">
         <button class="cancel-btn" id="cancelNew">Cancel</button>
         <button class="post-btn" id="confirmNew">Open it</button>
@@ -1695,6 +2320,7 @@ function openNewModal(defaultType){
   const confirmBtn = document.getElementById('confirmNew');
   confirmBtn.onclick = async () => {
     if(confirmBtn.disabled) return;
+    if(!requireLogin('open a new topic')) return;
     const title = document.getElementById('newTitle').value.trim();
     if(!title) return;
     confirmBtn.disabled = true;
@@ -1703,9 +2329,10 @@ function openNewModal(defaultType){
 
     const desc = document.getElementById('newDesc').value.trim();
     const tag = document.getElementById('newTag').value.trim();
-    const author = document.getElementById('newAuthor').value.trim();
     const topicRow = {
-      title, description: desc, tag, author,
+      title, description: desc, tag,
+      author: displayName(),
+      user_id: state.user.id,
       type: pickedType,
       side_labels: null,
     };
@@ -1720,8 +2347,6 @@ function openNewModal(defaultType){
       if(error) throw error;
       const topic = mapTopicRow(data);
       state.topics.unshift(topic);
-      state.myTopicIds.add(topic.id);
-      persistMyIds();
       state.route = { view:'detail', id: topic.id };
     }catch(e){
       console.error('Failed to create topic/debate:', e);
@@ -1733,6 +2358,130 @@ function openNewModal(defaultType){
   };
 }
 
+/** Edit modal for an existing topic/debate — owner only (also enforced server-side by RLS). */
+function openEditModal(topic){
+  const isDebate = topic.type === 'debate';
+  const labels = topic.sideLabels || ['Side A','Side B'];
+  const wrap = document.createElement('div');
+  wrap.className = 'overlay';
+  wrap.innerHTML = `
+    <div class="modal">
+      <h2>Edit ${isDebate ? 'debate' : 'topic'}</h2>
+      <label>Category / Tag</label>
+      <input type="text" id="editTag" value="${escapeHtml(topic.tag||'')}" placeholder="e.g. Politics, Technology">
+      <label>Title</label>
+      <input type="text" id="editTitle" value="${escapeHtml(topic.title)}" placeholder="Enter a clear, specific title">
+      <label>Description (optional)</label>
+      <textarea id="editDesc" placeholder="Add context for this discussion (optional)">${escapeHtml(topic.description||'')}</textarea>
+      ${ isDebate ? `
+      <label>Side labels</label>
+      <div class="side-labels-row">
+        <input type="text" id="editSideA" value="${escapeHtml(labels[0])}">
+        <input type="text" id="editSideB" value="${escapeHtml(labels[1])}">
+      </div>` : '' }
+      <div class="modal-foot">
+        <button class="cancel-btn" id="cancelEdit">Cancel</button>
+        <button class="post-btn" id="confirmEdit">Save changes</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrap);
+  document.getElementById('cancelEdit').onclick = () => wrap.remove();
+  wrap.onclick = (e) => { if(e.target===wrap) wrap.remove(); };
+
+  const confirmBtn = document.getElementById('confirmEdit');
+  confirmBtn.onclick = async () => {
+    if(confirmBtn.disabled) return;
+    const title = document.getElementById('editTitle').value.trim();
+    if(!title) return;
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = '0.6';
+    confirmBtn.textContent = 'Saving…';
+
+    const updateRow = {
+      title,
+      description: document.getElementById('editDesc').value.trim(),
+      tag: document.getElementById('editTag').value.trim(),
+    };
+    if(isDebate){
+      const a = document.getElementById('editSideA').value.trim() || 'Side A';
+      const b = document.getElementById('editSideB').value.trim() || 'Side B';
+      updateRow.side_labels = [a,b];
+    }
+
+    try{
+      // RLS only allows this to succeed if the current user owns the row.
+      const { data, error } = await supabase.from('topics').update(updateRow).eq('id', topic.id).select().single();
+      if(error) throw error;
+      const updated = mapTopicRow(data);
+      const idx = state.topics.findIndex(x=>x.id===topic.id);
+      if(idx !== -1) state.topics[idx] = updated;
+    }catch(e){
+      console.error('Failed to update topic:', e);
+      alert("Couldn't save your changes — check your connection and try again.");
+    } finally {
+      wrap.remove();
+    }
+    render();
+  };
+}
+
+/** Report modal — logged-in users can flag a topic or opinion for moderation. */
+function openReportModal(kind, targetId){
+  if(!requireLogin('report content')) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'overlay';
+  wrap.innerHTML = `
+    <div class="modal" style="max-width:420px;">
+      <h2>Report ${kind === 'topic' ? 'this post' : 'this opinion'}</h2>
+      <label>Reason</label>
+      <select id="reportReason">
+        <option value="spam">Spam or advertising</option>
+        <option value="harassment">Harassment or hate speech</option>
+        <option value="misinformation">Misinformation</option>
+        <option value="inappropriate">Inappropriate content</option>
+        <option value="other">Other</option>
+      </select>
+      <label>Additional details (optional)</label>
+      <textarea id="reportDetails" placeholder="Anything else moderators should know?"></textarea>
+      <div class="modal-foot">
+        <button class="cancel-btn" id="cancelReport">Cancel</button>
+        <button class="post-btn" id="confirmReport" style="background:var(--danger);">Submit report</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrap);
+  document.getElementById('cancelReport').onclick = () => wrap.remove();
+  wrap.onclick = (e) => { if(e.target===wrap) wrap.remove(); };
+
+  const confirmBtn = document.getElementById('confirmReport');
+  confirmBtn.onclick = async () => {
+    if(confirmBtn.disabled) return;
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = '0.6';
+    confirmBtn.textContent = 'Submitting…';
+
+    const reportRow = {
+      target_type: kind,
+      target_id: targetId,
+      reporter_id: state.user.id,
+      reason: document.getElementById('reportReason').value,
+      details: document.getElementById('reportDetails').value.trim(),
+    };
+
+    try{
+      const { error } = await supabase.from('reports').insert(reportRow);
+      if(error) throw error;
+      wrap.remove();
+      showConfirm("Thanks — our moderators will take a look. No further action needed from you.", 'OK', ()=>{});
+    }catch(e){
+      console.error('Failed to submit report:', e);
+      alert("Couldn't submit the report — check your connection and try again.");
+      wrap.remove();
+    }
+  };
+}
+
 document.addEventListener('click', () => {
   if(state.openMenuFor !== null){
     state.openMenuFor = null;
@@ -1741,13 +2490,44 @@ document.addEventListener('click', () => {
 });
 
 async function init(){
-  loadMyIds();
+  initTheme();
+
   if(CONFIG_IS_PLACEHOLDER){
     state.setupNeeded = true;
     state.loading = false;
     render();
     return;
   }
+
+  // Listen for auth changes (sign in, sign out, token refresh, and the
+  // redirect back from Google) and keep our local state in sync.
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    const newUser = session ? session.user : null;
+    const userChanged = (newUser?.id || null) !== (state.user?.id || null);
+    state.user = newUser;
+    state.authReady = true;
+    if(newUser && userChanged){
+      await upsertProfile(newUser);
+      await loadUserVotes();
+      await loadNotifications();
+    } else if(!newUser){
+      state.profile = null;
+      state.votedTopicIds = new Set();
+      state.votedOpinionIds = new Set();
+      state.notifications = [];
+      state.unreadCount = 0;
+    }
+    if(!state.loading) render();
+  });
+
+  const { data: { session } } = await supabase.auth.getSession();
+  state.user = session ? session.user : null;
+  state.authReady = true;
+  if(state.user){
+    await upsertProfile(state.user);
+    await loadNotifications();
+  }
+
   await loadTopics();
   state.loading = false;
   render();
