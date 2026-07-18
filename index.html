@@ -982,6 +982,90 @@ font-size:16px;
 .vote-count{font-weight:800;font-size:15px;color:var(--text-primary);}
 .opinion-text{font-size:15px;line-height:1.6;margin-bottom:8px;white-space:pre-line;}
 .opinion-author{font-size:12.5px;color:var(--text-tertiary2);}
+
+/* ---------- replies ---------- */
+.reply-toggle{
+background:none;
+border:none;
+color:var(--text-tertiary2);
+font-size:12.5px;
+font-weight:600;
+margin-top:8px;
+padding:2px 0;
+}
+@media (hover:hover) and (pointer:fine){
+.reply-toggle:hover{color:var(--accent);}
+}
+.replies-wrap{
+margin-top:12px;
+padding-left:16px;
+border-left:2px solid var(--border-soft);
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+.reply-item{
+font-size:13.5px;
+line-height:1.55;
+}
+.reply-item .reply-text{color:var(--text-primary);white-space:pre-line;}
+.reply-item .reply-meta{
+display:flex;
+gap:10px;
+align-items:center;
+color:var(--text-tertiary);
+font-size:11.5px;
+margin-top:4px;
+}
+.reply-meta button{
+background:none;
+border:none;
+color:var(--text-tertiary);
+font-size:11.5px;
+font-weight:600;
+padding:0;
+}
+@media (hover:hover) and (pointer:fine){
+.reply-meta button:hover{color:var(--danger);}
+}
+.reply-form{
+margin-top:12px;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+.reply-form textarea{
+width:100%;
+min-height:56px;
+padding:10px 12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:var(--bg-surface);
+color:var(--text-primary);
+font-size:13.5px;
+outline:none;
+resize:vertical;
+font-family:inherit;
+}
+.reply-form-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+}
+.reply-submit-btn{
+background:var(--accent);
+color:white;
+border:none;
+padding:8px 16px;
+border-radius:999px;
+font-size:12.5px;
+font-weight:700;
+}
+@media (hover:hover) and (pointer:fine){
+.reply-submit-btn:hover{opacity:.9;}
+}
+.reply-signin-note{font-size:12px;color:var(--text-tertiary);}
 .top-badge{
 display:inline-block;
 font-size:11px;
@@ -1280,6 +1364,9 @@ let state = {
   search: '',
   route: { view:'home', id:null },
   detailOpinions: [],
+  detailOpinionsTopicId: null, // which topic's opinions are currently loaded into detailOpinions
+  repliesByOpinion: {},   // opinionId -> array of replies, loaded alongside detailOpinions
+  openRepliesFor: new Set(),  // opinion ids whose reply thread is currently expanded
   openMenuFor: null,
 
   // auth
@@ -1517,6 +1604,9 @@ function notifText(n){
   if(n.type === 'reply'){
     return `<strong>${actor}</strong> replied to your ${escapeHtml(n.context_label||'topic')}: "${escapeHtml((n.message||'').slice(0,80))}"`;
   }
+  if(n.type === 'reply_to_opinion'){
+    return `<strong>${actor}</strong> replied to your opinion: "${escapeHtml((n.message||'').slice(0,80))}"`;
+  }
   return escapeHtml(n.message || 'You have a new notification.');
 }
 
@@ -1555,6 +1645,17 @@ function mapOpinionRow(row){
   };
 }
 
+function mapReplyRow(row){
+  return {
+    id: row.id,
+    opinionId: row.opinion_id,
+    text: row.text,
+    author: row.author,
+    userId: row.user_id,
+    createdAt: new Date(row.created_at).getTime(),
+  };
+}
+
 async function loadTopics(){
   try{
     const { data, error } = await supabase.from('topics').select('*').order('created_at', { ascending:false });
@@ -1579,6 +1680,27 @@ async function loadOpinions(topicId){
     state.detailOpinions = [];
   }
   await loadUserOpinionVotes(state.detailOpinions.map(o=>o.id));
+  await loadReplies(state.detailOpinions.map(o=>o.id));
+}
+
+/** Batch-loads every reply for the currently loaded opinions in one query. */
+async function loadReplies(opinionIds){
+  state.repliesByOpinion = {};
+  if(!opinionIds.length) return;
+  try{
+    const { data, error } = await supabase.from('opinion_replies')
+      .select('*')
+      .in('opinion_id', opinionIds)
+      .order('created_at', { ascending: true });
+    if(error) throw error;
+    (data || []).forEach(row => {
+      const reply = mapReplyRow(row);
+      if(!state.repliesByOpinion[reply.opinionId]) state.repliesByOpinion[reply.opinionId] = [];
+      state.repliesByOpinion[reply.opinionId].push(reply);
+    });
+  }catch(e){
+    console.error('Failed to load replies:', e);
+  }
 }
 
 function ensureStats(t){
@@ -1625,6 +1747,7 @@ async function render(){
     b.classList.toggle('active', state.route.view==='home' && b.dataset.filter===state.filter);
   });
   if(state.route.view === 'home'){
+    state.detailOpinionsTopicId = null;
     root.innerHTML = renderHome();
   } else {
     root.innerHTML = await renderDetail(state.route.id);
@@ -1878,7 +2001,14 @@ async function renderDetail(id){
   if(!t){
     return `<div class="wrapper"><div class="empty-state" style="grid-column:1/-1;">That item isn't here anymore.</div></div>`;
   }
-  await loadOpinions(id);
+  // Only re-fetch from the database when we've switched to a different topic.
+  // Re-fetching on every re-render (e.g. right after casting a vote) would
+  // overwrite the optimistic local vote count with the not-yet-updated
+  // server value, making votes appear to "not count."
+  if(state.detailOpinionsTopicId !== id){
+    await loadOpinions(id);
+    state.detailOpinionsTopicId = id;
+  }
   const stats = ensureStats(t);
   const isDebate = t.type === 'debate';
   const labels = t.sideLabels || ['Side A','Side B'];
@@ -1890,6 +2020,34 @@ async function renderDetail(id){
   const opinionRow = (op, isTop) => {
     const voted = state.votedOpinionIds.has(op.id);
     const mineOp = state.user && op.userId === state.user.id;
+    const replies = state.repliesByOpinion[op.id] || [];
+    const repliesOpen = state.openRepliesFor.has(op.id);
+    const replyLabel = replies.length ? `💬 ${replies.length} ${replies.length===1?'Reply':'Replies'}` : '💬 Reply';
+
+    const replyItem = (r) => {
+      const mineReply = state.user && r.userId === state.user.id;
+      return `
+        <div class="reply-item">
+          <div class="reply-text">${escapeHtml(r.text)}</div>
+          <div class="reply-meta">
+            <span>${escapeHtml(r.author || 'Anonymous')} · ${timeAgo(r.createdAt)}</span>
+            ${state.user ? `<button data-report-reply="${r.id}">Report</button>` : ''}
+            ${mineReply ? `<button data-delete-reply="${r.id}:${op.id}">Delete</button>` : ''}
+          </div>
+        </div>
+      `;
+    };
+
+    const replyForm = state.user ? `
+      <div class="reply-form">
+        <textarea id="replyText-${op.id}" placeholder="Write a reply…"></textarea>
+        <div class="reply-form-row">
+          <span class="posting-as" style="margin:0;">Posting as ${escapeHtml(displayName())}</span>
+          <button class="reply-submit-btn" data-submit-reply="${op.id}">Reply</button>
+        </div>
+      </div>
+    ` : `<div class="reply-form"><span class="reply-signin-note">🔑 <a href="#" data-reply-signin="1" style="color:var(--accent);font-weight:700;">Sign in with Google</a> to reply.</span></div>`;
+
     return `
       <div class="opinion-item ${isTop ? 'top':''}">
         <div class="vote-col">
@@ -1903,6 +2061,11 @@ async function renderDetail(id){
           </div>
           <div class="opinion-text">${escapeHtml(op.text)}</div>
           <div class="opinion-author">${escapeHtml(op.author || 'Anonymous')} · ${timeAgo(op.createdAt)}</div>
+          <button class="reply-toggle" data-toggle-replies="${op.id}">${repliesOpen ? '▲ Hide' : replyLabel}</button>
+          ${ repliesOpen ? `
+            ${ replies.length ? `<div class="replies-wrap">${replies.map(replyItem).join('')}</div>` : '' }
+            ${replyForm}
+          ` : '' }
         </div>
       </div>
     `;
@@ -2086,6 +2249,36 @@ function bindEvents(){
       openReportModal(kind, targetId);
     };
   });
+
+  document.querySelectorAll('[data-toggle-replies]').forEach(el=>{
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const id = el.dataset.toggleReplies;
+      if(state.openRepliesFor.has(id)) state.openRepliesFor.delete(id);
+      else state.openRepliesFor.add(id);
+      render();
+    };
+  });
+
+  document.querySelectorAll('[data-submit-reply]').forEach(el=>{
+    el.onclick = (e) => { e.stopPropagation(); submitReply(el.dataset.submitReply); };
+  });
+
+  document.querySelectorAll('[data-delete-reply]').forEach(el=>{
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const [replyId, opinionId] = el.dataset.deleteReply.split(':');
+      deleteReply(replyId, opinionId);
+    };
+  });
+
+  document.querySelectorAll('[data-report-reply]').forEach(el=>{
+    el.onclick = (e) => { e.stopPropagation(); openReportModal('reply', el.dataset.reportReply); };
+  });
+
+  document.querySelectorAll('[data-reply-signin]').forEach(el=>{
+    el.onclick = (e) => { e.preventDefault(); e.stopPropagation(); signInWithGoogle(); };
+  });
 }
 
 function renderInPlace(){
@@ -2191,6 +2384,59 @@ function deleteOpinion(opinionId){
       await supabase.rpc('increment_opinion_count', { p_topic_id: t.id, p_delta: -1 }).catch(()=>{});
     }catch(e){
       console.error('Failed to delete opinion on server:', e);
+    }
+  });
+}
+
+let isSubmittingReply = false;
+
+async function submitReply(opinionId){
+  if(isSubmittingReply) return;
+  if(!requireLogin('reply')) return;
+  const textEl = document.getElementById('replyText-'+opinionId);
+  if(!textEl) return;
+  const text = textEl.value.trim();
+  if(!text) return;
+  isSubmittingReply = true;
+  const btn = document.querySelector(`[data-submit-reply="${opinionId}"]`);
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; }
+
+  const replyRow = {
+    opinion_id: opinionId,
+    text,
+    author: displayName(),
+    user_id: state.user.id,
+  };
+
+  try{
+    const { data, error } = await supabase.from('opinion_replies').insert(replyRow).select().single();
+    if(error) throw error;
+    const reply = mapReplyRow(data);
+    if(!state.repliesByOpinion[opinionId]) state.repliesByOpinion[opinionId] = [];
+    state.repliesByOpinion[opinionId].push(reply);
+    state.openRepliesFor.add(opinionId);
+  }catch(e){
+    console.error('Failed to post reply:', e);
+    alert("Couldn't post that reply — check your connection and try again.");
+  }
+
+  isSubmittingReply = false;
+  render();
+}
+
+function deleteReply(replyId, opinionId){
+  showConfirm("Delete this reply? This can't be undone.", 'Delete', async () => {
+    const list = state.repliesByOpinion[opinionId] || [];
+    const idx = list.findIndex(r=>r.id===replyId);
+    if(idx !== -1) list.splice(idx, 1);
+    render();
+
+    try{
+      // RLS only allows this to succeed if the current user owns the row.
+      const { error } = await supabase.from('opinion_replies').delete().eq('id', replyId);
+      if(error) throw error;
+    }catch(e){
+      console.error('Failed to delete reply on server:', e);
     }
   });
 }
@@ -2457,7 +2703,7 @@ function openReportModal(kind, targetId){
   wrap.className = 'overlay';
   wrap.innerHTML = `
     <div class="modal" style="max-width:420px;">
-      <h2>Report ${kind === 'topic' ? 'this post' : 'this opinion'}</h2>
+      <h2>Report ${kind === 'topic' ? 'this post' : kind === 'reply' ? 'this reply' : 'this opinion'}</h2>
       <label>Reason</label>
       <select id="reportReason">
         <option value="spam">Spam or advertising</option>
