@@ -647,6 +647,8 @@ color:var(--text-secondary);
 
 line-height:1.7;
 
+white-space:pre-line;
+
 margin-bottom:22px;
 
 }
@@ -978,7 +980,7 @@ font-size:16px;
 }
 .vote-arrow.voted{background:var(--accent);color:white;border-color:var(--accent);}
 .vote-count{font-weight:800;font-size:15px;color:var(--text-primary);}
-.opinion-text{font-size:15px;line-height:1.6;margin-bottom:8px;}
+.opinion-text{font-size:15px;line-height:1.6;margin-bottom:8px;white-space:pre-line;}
 .opinion-author{font-size:12.5px;color:var(--text-tertiary2);}
 .top-badge{
 display:inline-block;
@@ -1397,6 +1399,25 @@ async function signInWithGoogle(){
   });
 }
 
+/**
+ * Lets a signed-in user switch to a different Google account without a
+ * separate manual "sign out, then sign in again" step. `prompt: select_account`
+ * tells Google to show the account chooser (including "Use another account")
+ * even if the browser already has a Google session — instead of silently
+ * re-using whichever account is currently active.
+ */
+async function switchAccount(){
+  if(!supabase) return;
+  state.userMenuOpen = false;
+  await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.href,
+      queryParams: { prompt: 'select_account' }
+    }
+  });
+}
+
 async function signOut(){
   if(!supabase) return;
   await supabase.auth.signOut();
@@ -1656,6 +1677,7 @@ function renderHeader(){
             <div class="ud-name">${escapeHtml(displayName())}</div>
             <div class="ud-email">${escapeHtml((state.profile && state.profile.email) || '')}</div>
           </div>
+          <button class="menu-item" id="switchAccountBtn">🔁 Switch account</button>
           <button class="menu-item" id="signOutBtn">Sign out</button>
         </div>
       </div>
@@ -1703,6 +1725,8 @@ function bindHeaderEvents(){
     state.notifOpen = false;
     renderHeader();
   };
+  const switchAccountBtn = document.getElementById('switchAccountBtn');
+  if(switchAccountBtn) switchAccountBtn.onclick = (e) => { e.stopPropagation(); switchAccount(); };
   const signOutBtn = document.getElementById('signOutBtn');
   if(signOutBtn) signOutBtn.onclick = () => signOut();
 }
