@@ -1792,14 +1792,22 @@ async function searchProfilesForMention(query){
 }
 
 /**
- * Renders posted text with any "@Name" mentions highlighted. This is a
- * cosmetic pattern-match (it doesn't re-verify the name is a real user) so
- * it can't fully replace copyright-safe rendering rules, but it's fine for
- * highlighting plain user-authored text.
+ * Renders posted text with any "@Name" mentions highlighted.
+ *
+ * Mentions inserted via the @ autocomplete (or via the "Reply to @Name" tag)
+ * are stored as "@{Name}" so we know the *exact* boundary of the name —
+ * this avoids the old bug where the highlighter would greedily swallow a
+ * word or two of ordinary text right after the name (e.g. "@John hello"
+ * turning "hello" green too). Anything typed by hand as a plain "@word"
+ * (not picked from the dropdown) falls back to highlighting just that one
+ * word, since we can't verify multi-word names for those.
  */
 function renderMentionText(text){
   const escaped = escapeHtml(text);
-  return escaped.replace(/@([A-Za-z0-9_]+(?:\s[A-Za-z0-9_]+){0,2})(?=[\s.,!?;:()]|$)/g, (m, name) => `<span class="mention-tag">@${name}</span>`);
+  return escaped.replace(/@\{([^{}]+)\}|@([A-Za-z0-9_]+)/g, (m, taggedName, plainWord) => {
+    const name = taggedName !== undefined ? taggedName : plainWord;
+    return `<span class="mention-tag">@${name}</span>`;
+  });
 }
 
 /** Notifies every user tagged with @ in a just-posted opinion/reply. */
@@ -1861,7 +1869,7 @@ function bindMentionInputs(){
             const id = item.dataset.id, name = item.dataset.name;
             const before = val.slice(0, pos - query.length - 1);
             const after = val.slice(pos);
-            ta.value = `${before}@${name} ${after}`;
+            ta.value = `${before}@{${name}} ${after}`;
             if(!mentionSelections[key]) mentionSelections[key] = [];
             if(!mentionSelections[key].find(m=>m.id===id)) mentionSelections[key].push({id, name});
             hide();
@@ -2892,7 +2900,7 @@ async function setReplyTarget(opinionId, targetUserId, targetName){
   await render();
   const ta = document.getElementById('replyText-'+opinionId);
   if(ta){
-    ta.value = `@${targetName} `;
+    ta.value = `@{${targetName}} `;
     if(targetUserId){
       mentionSelections[ta.id] = [{ id: targetUserId, name: targetName }];
     }
@@ -2907,7 +2915,7 @@ async function clearReplyTarget(opinionId){
   delete state.replyingTo[opinionId];
   const key = 'replyText-'+opinionId;
   const existing = document.getElementById(key);
-  const remainingText = existing ? existing.value.replace(/^@\S+(?:\s\S+){0,2}\s*/, '') : '';
+  const remainingText = existing ? existing.value.replace(/^@\{[^{}]+\}\s*/, '') : '';
   mentionSelections[key] = [];
   await render();
   const ta = document.getElementById(key);
