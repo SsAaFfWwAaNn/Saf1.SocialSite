@@ -1792,22 +1792,18 @@ async function searchProfilesForMention(query){
 }
 
 /**
- * Renders posted text with any "@Name" mentions highlighted.
- *
- * Mentions inserted via the @ autocomplete (or via the "Reply to @Name" tag)
- * are stored as "@{Name}" so we know the *exact* boundary of the name —
- * this avoids the old bug where the highlighter would greedily swallow a
- * word or two of ordinary text right after the name (e.g. "@John hello"
- * turning "hello" green too). Anything typed by hand as a plain "@word"
- * (not picked from the dropdown) falls back to highlighting just that one
- * word, since we can't verify multi-word names for those.
+ * Renders posted text with any "@Name" mentions highlighted. This is a
+ * cosmetic pattern-match (it doesn't re-verify the name is a real user).
+ * A mention can be multiple words (e.g. "@Safwan Islam"), but only the
+ * name itself should light up — not whatever ordinary sentence follows it.
+ * Real display names are Title Case, so we only let a 2nd/3rd word join
+ * the mention if it also starts with a capital letter; a lowercase word
+ * right after (the normal case — someone continuing their sentence) ends
+ * the mention there.
  */
 function renderMentionText(text){
   const escaped = escapeHtml(text);
-  return escaped.replace(/@\{([^{}]+)\}|@([A-Za-z0-9_]+)/g, (m, taggedName, plainWord) => {
-    const name = taggedName !== undefined ? taggedName : plainWord;
-    return `<span class="mention-tag">@${name}</span>`;
-  });
+  return escaped.replace(/@([A-Za-z0-9_]+(?:\s[A-Z][A-Za-z0-9_']*){0,2})(?=[\s.,!?;:()]|$)/g, (m, name) => `<span class="mention-tag">@${name}</span>`);
 }
 
 /** Notifies every user tagged with @ in a just-posted opinion/reply. */
@@ -1869,7 +1865,7 @@ function bindMentionInputs(){
             const id = item.dataset.id, name = item.dataset.name;
             const before = val.slice(0, pos - query.length - 1);
             const after = val.slice(pos);
-            ta.value = `${before}@{${name}} ${after}`;
+            ta.value = `${before}@${name} ${after}`;
             if(!mentionSelections[key]) mentionSelections[key] = [];
             if(!mentionSelections[key].find(m=>m.id===id)) mentionSelections[key].push({id, name});
             hide();
@@ -2900,7 +2896,7 @@ async function setReplyTarget(opinionId, targetUserId, targetName){
   await render();
   const ta = document.getElementById('replyText-'+opinionId);
   if(ta){
-    ta.value = `@{${targetName}} `;
+    ta.value = `@${targetName} `;
     if(targetUserId){
       mentionSelections[ta.id] = [{ id: targetUserId, name: targetName }];
     }
@@ -2912,10 +2908,15 @@ async function setReplyTarget(opinionId, targetUserId, targetName){
 
 /** Clears the "Replying to @Name" tag on an opinion's reply box, stripping the auto-inserted mention from the top of whatever's been typed. */
 async function clearReplyTarget(opinionId){
+  const target = state.replyingTo[opinionId];
   delete state.replyingTo[opinionId];
   const key = 'replyText-'+opinionId;
   const existing = document.getElementById(key);
-  const remainingText = existing ? existing.value.replace(/^@\{[^{}]+\}\s*/, '') : '';
+  let remainingText = existing ? existing.value : '';
+  if(target){
+    const prefix = `@${target.name} `;
+    if(remainingText.startsWith(prefix)) remainingText = remainingText.slice(prefix.length);
+  }
   mentionSelections[key] = [];
   await render();
   const ta = document.getElementById(key);
